@@ -9,6 +9,8 @@ import {
   signOut,
   onAuthStateChanged,
   updatePassword,
+  reauthenticateWithCredential,
+  EmailAuthProvider,
   getIdTokenResult
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
@@ -96,9 +98,17 @@ async function getStudentData() {
 async function teacherGetAll() {
   return api("teacher_get_all", {});
 }
-async function changeCurrentPassword(newPassword) {
-  if (!auth.currentUser) throw new Error("Silakan login kembali.");
-  await updatePassword(auth.currentUser, newPassword);
+async function changeCurrentPassword(oldPassword, newPassword) {
+  const user = auth.currentUser;
+  if (!user || !user.email) throw new Error("Silakan login kembali.");
+  const credential = EmailAuthProvider.credential(user.email, oldPassword);
+  await reauthenticateWithCredential(user, credential);
+  await updatePassword(user, newPassword);
+  try {
+    await api("password_change_confirmed", {});
+  } catch (error) {
+    console.warn("Password changed, but account flags could not refresh.", error);
+  }
 }
 async function logout() {
   await signOut(auth);
