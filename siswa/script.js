@@ -1,5 +1,7 @@
 /* ════ CONFIG ════ */
-const API_URL = "https://script.google.com/macros/s/AKfycbwrqUAnU4MTq_ANvXADI2SW6jJ9MAc1aT7XYAQ-iIkZKx9m_Folqhy2AIQ6Z2KULr2x/exec";
+const LEGACY_API_URL = "https://script.google.com/macros/s/AKfycbwrqUAnU4MTq_ANvXADI2SW6jJ9MAc1aT7XYAQ-iIkZKx9m_Folqhy2AIQ6Z2KULr2x/exec";
+const USE_FIREBASE_BACKEND = window.ICT_RUNTIME_CONFIG?.backend === "firebase";
+const API_URL = USE_FIREBASE_BACKEND ? window.ICT_RUNTIME_CONFIG.apiUrl : LEGACY_API_URL;
 const TOKEN_KEY = 'ict_siswa_token';
 const CACHE_KEY = 'ict_siswa_cache';
 
@@ -18,9 +20,36 @@ const KARYA_PER_PAGE = 6;
 
 /* ════ INIT & AUTH ════ */
 document.addEventListener('DOMContentLoaded', () => {
+  if (USE_FIREBASE_BACKEND) {
+    let firstAuthState = true;
+    window.ICTFirebase.onAuthChanged(async (user) => {
+      if (!firstAuthState) return;
+      firstAuthState = false;
+      if (!user) {
+        localStorage.removeItem(TOKEN_KEY);
+        localStorage.removeItem(CACHE_KEY);
+        return;
+      }
+      try {
+        const json = await window.ICTFirebase.getStudentData();
+        localStorage.setItem(TOKEN_KEY, 'firebase-authenticated');
+        localStorage.setItem(CACHE_KEY, JSON.stringify(json));
+        DATA = json;
+        KODE_SISWA = json.siswa.kode;
+        showDashboard();
+        renderAll(json);
+      } catch (error) {
+        console.warn("Firebase session is not a student session.", error);
+        await window.ICTFirebase.logout();
+        localStorage.removeItem(TOKEN_KEY);
+        localStorage.removeItem(CACHE_KEY);
+      }
+    });
+    return;
+  }
+
   const savedToken = localStorage.getItem(TOKEN_KEY);
   const cachedDataStr = localStorage.getItem(CACHE_KEY);
-
   if (savedToken && cachedDataStr) {
     try {
       DATA = JSON.parse(cachedDataStr);
@@ -34,41 +63,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function doLogin() {
   const kode = document.getElementById('inp-kode').value.trim().toUpperCase();
-  const pass = document.getElementById('inp-pass').value.trim(); // ⬅️ Ambil password
-  
+  const pass = document.getElementById('inp-pass').value.trim();
+  const errEl = document.getElementById('login-err');
   if (!kode || !pass) {
-     const errEl = document.getElementById('login-err');
-     errEl.textContent = "NIS dan Password wajib diisi.";
-     errEl.classList.remove('hidden');
-     return;
+    errEl.textContent = "NIS dan Password wajib diisi.";
+    errEl.classList.remove('hidden');
+    return;
   }
-  
+
   const btn = document.getElementById('btn-login');
-  btn.disabled = true; btn.textContent = 'Memverifikasi...';
-  document.getElementById('login-err').classList.add('hidden');
-  
+  btn.disabled = true;
+  btn.textContent = 'Memverifikasi...';
+  errEl.classList.add('hidden');
   try {
-    // ⬅️ Kirim password via URL
-    const json = await fetchJSONP(`${API_URL}?kode=${kode}&password=${encodeURIComponent(pass)}`, 'cb_' + Date.now());
-    if (!json.success) { 
-      const errEl = document.getElementById('login-err');
-      errEl.textContent = json.message || "Gagal masuk.";
-      errEl.classList.remove('hidden');
-      return; 
+    let json;
+    if (USE_FIREBASE_BACKEND) {
+      await window.ICTFirebase.loginStudent(kode, pass);
+      json = await window.ICTFirebase.getStudentData();
+      localStorage.setItem(TOKEN_KEY, 'firebase-authenticated');
+    } else {
+      json = await fetchJSONP(`${API_URL}?kode=${kode}&password=${encodeURIComponent(pass)}`, 'cb_' + Date.now());
+      if (!json.success) {
+        errEl.textContent = json.message || "Gagal masuk.";
+        errEl.classList.remove('hidden');
+        return;
+      }
+      localStorage.setItem(TOKEN_KEY, json.token);
     }
-    
-    localStorage.setItem(TOKEN_KEY, json.token);
+
     localStorage.setItem(CACHE_KEY, JSON.stringify(json));
     DATA = json;
     KODE_SISWA = DATA.siswa.kode;
-    
-    document.getElementById('inp-pass').value = ''; // Bersihkan input password
+    document.getElementById('inp-pass').value = '';
     showDashboard();
     renderAll(json);
-  } catch (e) {
-    alert('Gagal terhubung ke server.');
+  } catch (error) {
+    errEl.textContent = error.message || 'Gagal masuk. Periksa koneksi dan akun.';
+    errEl.classList.remove('hidden');
   } finally {
-    btn.disabled = false; btn.textContent = 'Mulai Belajar';
+    btn.disabled = false;
+    btn.textContent = 'Mulai Belajar';
   }
 }
 
@@ -138,24 +172,40 @@ function fetchJSONP(url, cbName) {
 
 async function refreshDataInBackground(token) {
   try {
-    const json = await fetchJSONP(`${API_URL}?token=${token}`, 'cb_bg_' + Date.now());
+    let json;
+    if (USE_FIREBASE_BACKEND) {
+      json = await window.ICTFirebase.getStudentData();
+    } else {
+      json = await fetchJSONP(`${API_URL}?token=${token}`, 'cb_bg_' + Date.now());
+    }
     if (json.success) {
       DATA = json;
       localStorage.setItem(CACHE_KEY, JSON.stringify(json));
       renderAll(json);
-    } else if (json.expired) {
-      doLogout();
+      return true;
     }
-  } catch (e) { console.log("Offline mode."); }
+    if (json.expired) doLogout();
+    return false;
+  } catch (e) {
+    console.log("Penyegaran gagal; data cache tetap ditampilkan.", e);
+    throw e;
+  }
 }
 
 // Fungsi POST untuk mengirim data "Tandai Selesai" ke Dasbor Guru
 async function postAPI(body) {
+  if (USE_FIREBASE_BACKEND) {
+    if (body.action === 'ubah_password_siswa') {
+      await window.ICTFirebase.changeCurrentPassword(body.data.old_pass, body.data.new_pass);
+      return { success: true };
+    }
+    return await window.ICTFirebase.api(body.action, body);
+  }
   body.token = localStorage.getItem(TOKEN_KEY);
   const res = await fetch(API_URL, {
-    method : 'POST',
+    method: 'POST',
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body   : JSON.stringify(body),
+    body: JSON.stringify(body),
   });
   return await res.json();
 }
