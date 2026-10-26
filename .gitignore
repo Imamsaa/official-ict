@@ -19,3 +19,6 @@ official-ict-migration-export*.json
 parent-invites*.csv
 account-reset*.csv
 migration-report*.json
+
+# Private school database export; keep it out of version control
+/DATABASE ICT SMPIT AL FIRDAUS.xlsx

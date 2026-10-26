@@ -13,6 +13,9 @@ Project ID default mengikuti konfigurasi Firebase yang sudah ada di kode dashboa
 
 ## Prioritas audit yang dicatat
 
+**Prioritas P0 — file database di repositori publik:** file DATABASE ICT SMPIT AL FIRDAUS.xlsx telah dikeluarkan dari snapshot `main` dan ditambahkan ke `.gitignore` karena dapat berisi data pribadi/password. Penghapusan pada commit terbaru tidak menghapus blob pada riwayat Git lama. Jangan menganggap data yang pernah ter-commit sudah aman; lakukan audit/pembersihan riwayat secara terencana dan rotasi password lama yang mungkin terekspos.
+
+
 1. Amankan jalur orang tua. Kode siswa saja tidak boleh cukup untuk melihat data anak.
 2. Lindungi setiap operasi API dengan autentikasi server dan otorisasi berbasis role.
 3. Satukan backend dashboard guru dengan sumber data utama.
