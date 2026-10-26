@@ -1,0 +1,17 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Data migrasi privat. Akses dilakukan melalui Cloud Functions yang
+    // memvalidasi Firebase ID token dan role. Admin SDK melewati Rules ini.
+    match /legacyData/{document=**} {
+      allow read, write: if false;
+    }
+    match /parentAccess/{document=**} {
+      allow read, write: if false;
+    }
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

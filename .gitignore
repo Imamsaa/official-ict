@@ -1,0 +1,21 @@
+# Node / Firebase
+node_modules/
+functions/node_modules/
+.firebase/
+firebase-debug.log
+firebase-debug.*.log
+
+# Credentials and local environment
+.env
+.env.*
+!.env.example
+service-account*.json
+*-service-account*.json
+google-credentials*.json
+
+# Private data exports and migration outputs
+legacy-export*.json
+official-ict-migration-export*.json
+parent-invites*.csv
+account-reset*.csv
+migration-report*.json
