@@ -147,7 +147,7 @@ async function main() {
   for (const student of students) {
     const code = normCode(student.kode_siswa);
     if (!code) continue;
-    await ensureAccount(auth, "student", code, student.nama_siswa, student.password || "123456", accountResetReport);
+    await ensureAccount(auth, "student", code, student.nama_siswa, student.password, accountResetReport);
     const accessRef = db.collection("parentAccess").doc(code);
     const accessSnap = await accessRef.get();
     if (!accessSnap.exists) {

@@ -1,0 +1,25 @@
+name: Validate Firebase migration files
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  syntax-and-config:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check JavaScript syntax
+        run: |
+          node --check functions/index.js
+          node --check scripts/import-firestore.js
+      - name: Validate JSON configuration
+        run: |
+          node -e "for (const f of ['firebase.json','.firebaserc','firestore.indexes.json','functions/package.json']) { JSON.parse(require('node:fs').readFileSync(f,'utf8')); console.log('OK',f); }"
