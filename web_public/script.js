@@ -1,6 +1,8 @@
 /* ── KONFIGURASI API ── */
 // PENTING: Ganti dengan URL Web App Google Apps Script Anda yang paling baru!
-const API_URL = "https://script.google.com/macros/s/AKfycbwrqUAnU4MTq_ANvXADI2SW6jJ9MAc1aT7XYAQ-iIkZKx9m_Folqhy2AIQ6Z2KULr2x/exec"; 
+const LEGACY_API_URL = "https://script.google.com/macros/s/AKfycbwrqUAnU4MTq_ANvXADI2SW6jJ9MAc1aT7XYAQ-iIkZKx9m_Folqhy2AIQ6Z2KULr2x/exec";
+const USE_FIREBASE_BACKEND = window.ICT_RUNTIME_CONFIG?.backend === "firebase";
+const API_URL = USE_FIREBASE_BACKEND ? window.ICT_RUNTIME_CONFIG.apiUrl : LEGACY_API_URL; 
 
 /* ── TEMPAT PENYIMPANAN DATA SEMENTARA ── */
 let galleryData = [];
@@ -21,17 +23,27 @@ let currentLbTab = 'ict';
 
 /* ── FUNGSI PENGAMBIL DATA (FETCH API MODERN) ── */
 function fetchJSONP(url, cbName) {
+  // Transition helper: Firebase returns JSON; the legacy API returns JSONP.
+  if (USE_FIREBASE_BACKEND) {
+    return fetch(url, { cache: "no-store" }).then(async (response) => {
+      let data;
+      try { data = await response.json(); }
+      catch (_) { throw new Error("Respons API tidak valid."); }
+      if (!response.ok || data.success === false) {
+        throw new Error(data.message || "Gagal memuat data.");
+      }
+      return data;
+    });
+  }
+
   return new Promise((resolve, reject) => {
-    // Beri batas waktu 15 detik agar HP tidak loading abadi
     const t = setTimeout(() => { cleanup(); reject(new Error('Koneksi lambat (Timeout)')); }, 15000);
     const script = document.createElement('script');
-    
-    const cleanup = () => { 
-      clearTimeout(t); 
-      delete window[cbName]; 
-      if(script.parentNode) script.remove(); 
+    const cleanup = () => {
+      clearTimeout(t);
+      delete window[cbName];
+      if (script.parentNode) script.remove();
     };
-    
     window[cbName] = (data) => { cleanup(); resolve(data); };
     script.src = url + '&callback=' + cbName;
     script.onerror = () => { cleanup(); reject(new Error('Gagal memuat data')); };
