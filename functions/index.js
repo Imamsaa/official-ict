@@ -267,6 +267,34 @@ async function teacherData() {
     kurikulum: data.kurikulum, prestasi: data.prestasi, tim: data.tim, rank_challenge: data.rank_challenge
   };
 }
+async function studentUpdateProgress(action, body, identity) {
+  requireRole(identity, ["student"]);
+  if (!body.data || typeof body.data !== "object") throw new Error("Data progres tidak valid.");
+  const data = { ...body.data };
+  const ownCode = normalizeCode(identity.studentCode);
+  if (!ownCode || normalizeCode(data.kode_siswa) !== ownCode) {
+    const err = new Error("Siswa hanya dapat mengubah progres miliknya sendiri.");
+    err.status = 403;
+    throw err;
+  }
+  const materialAction = action === "upsert_progres_materi";
+  const key = materialAction ? "id_materi" : "id_tugas";
+  if (!normalize(data[key])) throw new Error("ID materi atau tugas wajib diisi.");
+  const status = normalize(data.status);
+  const allowedStatuses = materialAction
+    ? ["Belum Mulai", "Belum Dikerjakan", "Proses", "Selesai"]
+    : ["Belum", "Proses", "Selesai", "Belum Dikerjakan", "Menunggu Penilaian"];
+  if (status && !allowedStatuses.includes(status)) {
+    const err = new Error("Status progres tidak valid.");
+    err.status = 400;
+    throw err;
+  }
+  for (const field of ["poin", "nilai", "poin_maksimal", "dinilai_oleh", "catatan_guru", "feedback_guru"]) delete data[field];
+  const config = UPSERT_ACTIONS[action];
+  if (!config) throw new Error("Operasi progres tidak dikenal.");
+  return writeRow(config[0], config[1], data);
+}
+
 async function teacherUpsert(action, body) {
   const config = UPSERT_ACTIONS[action];
   if (!config) throw new Error("Operasi simpan tidak dikenali.");
@@ -454,6 +482,9 @@ exports.api = onRequest({ region: REGION, maxInstances: 10 }, async (req, res) =
       if (body.action === "parent_login") return res.json(await parentLogin(body));
       const identity = await requireIdentity(req);
       if (body.action === "student_get_data") return res.json(await studentData(identity));
+      if (["upsert_progres_materi", "upsert_progres_tugas"].includes(body.action) && identity.role === "student") {
+        return res.json(await studentUpdateProgress(body.action, body, identity));
+      }
       requireRole(identity, ["teacher", "admin"]);
       if (body.action === "teacher_get_all" || body.action === "guru_get_all") return res.json(await teacherData());
       if (UPSERT_ACTIONS[body.action]) return res.json(await teacherUpsert(body.action, body));
