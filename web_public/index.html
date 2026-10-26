@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ICT Class — SMPIT Al Firdaus Purwodadi</title>
+
+  <!-- ── SEO STANDAR ── -->
+  <meta name="description" content="Program unggulan ICT SMPIT Al Firdaus Purwodadi. Membekali siswa dengan keterampilan teknologi mutakhir seperti pemrograman dan desain web berlandaskan akhlak Islami." />
+  <meta name="keywords" content="ICT, SMPIT Al Firdaus, Purwodadi, Program Unggulan, Kelas Komputer, Coding untuk Anak, Sekolah Islam Terpadu, Generasi Digital" />
+  <meta name="author" content="Tim ICT SMPIT Al Firdaus" />
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+  <meta name="robots" content="index, follow">
+
+  <!-- ── OPEN GRAPH (Untuk Preview WhatsApp, Facebook, LinkedIn) ── -->
+  <meta property="og:type" content="website" />
+  <!-- Nanti ganti dengan URL domain asli sekolah/web ini -->
+  <meta property="og:url" content="https://ict.alfirdaus.sch.id/" /> 
+  <meta property="og:title" content="ICT Class — SMPIT Al Firdaus Purwodadi" />
+  <meta property="og:description" content="Cetak generasi digital masa depan yang cakap teknologi dan berakhlak mulia. Bergabunglah dengan Program Unggulan ICT!" />
+  <!-- GANTI URL GAMBAR INI dengan poster resmi/foto sekolah (Resolusi ideal: 1200x630px) -->
+  <meta property="og:image" content="assets/front.png" />
+
+  <!-- ── TWITTER CARD (Untuk Preview Twitter/X) ── -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="ICT Class — SMPIT Al Firdaus Purwodadi" />
+  <meta name="twitter:description" content="Membekali siswa dengan keterampilan teknologi mutakhir berlandaskan akhlak Islami." />
+  <!-- Samakan dengan gambar OG di atas -->
+  <meta name="twitter:image" content="assets/front.png" />
+
+  <!-- ── STRUCTURED DATA (JSON-LD) UNTUK GOOGLE SEARCH ── -->
+  <!-- Ini membantu Google memahami bahwa ini adalah web edukasi/sekolah -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "EducationalOrganization",
+    "name": "SMPIT Al Firdaus Purwodadi",
+    "alternateName": "ICT Class Al Firdaus",
+    "url": "https://ict.alfirdaus.sch.id",
+    "logo": "assets/logo.png",
+    "description": "Program Unggulan ICT (Information and Communication Technology) SMPIT Al Firdaus Purwodadi.",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Purwodadi",
+      "addressRegion": "Jawa Tengah",
+      "addressCountry": "ID"
+    }
+  }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind (CDN / in-browser JIT) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cyan:     'var(--cyan)',
+            cyandim:  'var(--cyan-dim)',
+            blue:     'var(--blue)',
+            navy:     'var(--navy)',
+            bg:       'var(--bg)',
+            bg2:      'var(--bg2)',
+            bg3:      'var(--bg3)',
+            ink:      'var(--ice)',
+            muted:    'var(--muted)',
+            card:     'var(--card)',
+            brd:      'var(--border)',
+          },
+          fontFamily: {
+            orbitron: ['Orbitron', 'sans-serif'],
+            sans:     ['Inter', 'sans-serif'],
+            jet:      ['"JetBrains Mono"', 'monospace'],
+          },
+          boxShadow: {
+            glow: 'var(--glow)',
+          },
+          keyframes: {
+            pulseDot: {
+              '0%, 100%': { opacity: '1', transform: 'scale(1)' },
+              '50%':      { opacity: '.4', transform: 'scale(.7)' },
+            },
+            scrollLine: {
+              '0%':   { transform: 'scaleY(0)', transformOrigin: 'top' },
+              '50%':  { transform: 'scaleY(1)', transformOrigin: 'top' },
+              '51%':  { transform: 'scaleY(1)', transformOrigin: 'bottom' },
+              '100%': { transform: 'scaleY(0)', transformOrigin: 'bottom' },
+            },
+            orbSpin: {
+              from: { transform: 'rotate(0deg)' },
+              to:   { transform: 'rotate(360deg)' },
+            },
+            revealIn: {
+              from: { opacity: '0', transform: 'translateY(28px)' },
+              to:   { opacity: '1', transform: 'translateY(0)' },
+            },
+          },
+          animation: {
+            pulseDot:     'pulseDot 2s ease-in-out infinite',
+            scrollLine:   'scrollLine 2s ease-in-out infinite',
+            orbSpin18:    'orbSpin 18s linear infinite',
+            orbSpin10rev: 'orbSpin 10s linear infinite reverse',
+            orbSpin20:    'orbSpin 20s linear infinite',
+          },
+        },
+      },
+    };
+  </script>
+
+  <!-- Minimal residual CSS: only what Tailwind utilities genuinely can't express
+       (the theme variables themselves, scrollbar skin, and the toggle-knob pseudo-element
+       which depends on an ANCESTOR's data-theme attribute). Everything else below is Tailwind. -->
+  <style>
+    [data-theme="dark"] {
+      --cyan: #00C8FF; --cyan-dim: #0090C0; --blue: #0078C8; --navy: #003A6E;
+      --bg: #020B18; --bg2: #050F20; --bg3: #071628; --ice: #E8F8FF; 
+      --muted: #94BAD6; /* ⬅️ UBAH BAGIAN INI */
+      --card: rgba(0,120,200,0.07); --border: rgba(0,200,255,0.15);
+      --glow: 0 0 32px rgba(0,200,255,0.25); --nav-bg: rgba(2,11,24,0.88);
+      --modal-bg: #050F20; --tag-bg: rgba(0,200,255,.07);
+      --thumb-bg: linear-gradient(135deg,#003A6E,#020B18);
+    }
+    [data-theme="light"] {
+      --cyan: #00B6A6; /* Warna Teal (Tosca) Khas Skilvul */
+      --cyan-dim: #009386; 
+      --blue: #2563EB; 
+      --navy: #111827; 
+      --bg: #FFFFFF; /* Background putih bersih */
+      --bg2: #F9FAFB; /* Abu-abu sangat terang untuk seksi alternatif */
+      --bg3: #F3F4F6; 
+      --ice: #1F2937; /* Teks utama menggunakan abu-abu pekat (Charcoal) */
+      --muted: #6B7280; /* Teks sekunder yang nyaman dibaca */
+      --card: #FFFFFF; /* Background kartu putih murni */
+      --border: #E5E7EB; /* Border abu-abu halus ala Skilvul */
+      --glow: 0 0 32px rgba(0, 182, 166, 0.15); /* Efek cahaya Tosca yang lembut */
+      --nav-bg: rgba(255, 255, 255, 0.92); /* Navbar putih tembus pandang */
+      --modal-bg: #FFFFFF; 
+      --tag-bg: rgba(0, 182, 166, 0.1); 
+      --thumb-bg: linear-gradient(135deg, #F3F4F6, #E5E7EB);
+    }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--blue); border-radius: 99px; }
+
+    /* theme-toggle knob: depends on html[data-theme], not on its own class */
+    #themeToggle::after {
+      content: ''; width: 18px; height: 18px; border-radius: 50%;
+      background: var(--cyan); transition: transform .3s; position: relative;
+    }
+    [data-theme="light"] #themeToggle::after { transform: translateX(20px); background: #F5A623; }
+    [data-theme="light"] #themeToggle .toggle-moon { opacity: 0; }
+    [data-theme="light"] #themeToggle .toggle-sun  { opacity: 1; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body class="bg-bg text-ink font-sans overflow-x-hidden transition-colors duration-300">
+
+<!-- ── NAVBAR ── -->
+<nav id="nav" class="fixed top-0 left-0 right-0 z-[900] flex items-center justify-between px-6 md:px-16 h-[68px] bg-[color:var(--nav-bg)] backdrop-blur-md border-b border-brd transition-shadow duration-300 [&.scrolled]:shadow-[0_4px_40px_rgba(0,0,0,.2)]">
+  <div class="flex items-center gap-3 font-orbitron text-[1.05rem] font-bold tracking-wide">
+    <div class="w-[38px] h-[38px] rounded-full relative overflow-hidden shadow-[0_0_16px_rgba(0,200,255,0.5)] [background:radial-gradient(circle_at_35%_35%,#00C8FF,#0042A8)] before:content-[''] before:absolute before:-inset-1 before:rounded-full before:[background:repeating-linear-gradient(-45deg,transparent_0,transparent_4px,rgba(255,255,255,0.18)_4px,rgba(255,255,255,0.18)_6px)]"></div>
+    <span class="text-cyan">ICT</span>&nbsp;Al Firdaus
+  </div>
+
+  <ul class="hidden lg:flex gap-4 xl:gap-8 items-center">
+    <li><a href="#" class="nav-link text-[.82rem] font-medium tracking-wide text-muted uppercase transition-colors hover:text-cyan [&.active]:text-cyan" onclick="showPage('home');return false;">Beranda</a></li>
+    <li><a href="#" class="nav-link text-[.82rem] font-medium tracking-wide text-muted uppercase transition-colors hover:text-cyan [&.active]:text-cyan" onclick="showPage('home','about');return false;">Program</a></li>
+    <li><a href="#" class="nav-link text-[.82rem] font-medium tracking-wide text-muted uppercase transition-colors hover:text-cyan [&.active]:text-cyan" onclick="showPage('home','program');return false;">Kurikulum</a></li>
+    <li><a href="#" class="nav-link text-[.82rem] font-medium tracking-wide text-muted uppercase transition-colors hover:text-cyan [&.active]:text-cyan" onclick="showPage('karya');return false;">Karya</a></li>
+    <li><a href="#" class="nav-link text-[.82rem] font-medium tracking-wide text-muted uppercase transition-colors hover:text-cyan [&.active]:text-cyan" onclick="showPage('course');return false;">Course</a></li>
+    <li><a href="#" class="nav-link text-[.82rem] font-medium tracking-wide text-muted uppercase transition-colors hover:text-cyan [&.active]:text-cyan" onclick="showPage('challenge');return false;">Challenge</a></li>
+    <li><a href="#" class="nav-link text-[.82rem] font-medium tracking-wide text-muted uppercase transition-colors hover:text-cyan [&.active]:text-cyan" onclick="showPage('home','achievement');return false;">Prestasi</a></li>
+    <li><a href="#" class="nav-link text-[.82rem] font-medium tracking-wide text-muted uppercase transition-colors hover:text-cyan [&.active]:text-cyan" onclick="showPage('home','team');return false;">Tim</a></li>
+    <li><a href="#" class="px-[1.4rem] py-2 border border-cyan rounded-md text-cyan font-orbitron text-[.72rem] tracking-[.08em] transition-all hover:bg-cyan/10 hover:shadow-glow" onclick="showPage('home','cta');return false;">Daftar</a></li>
+  </ul>
+
+  <div class="flex items-center gap-4">
+    <button id="themeToggle" aria-label="Toggle dark/light mode" onclick="toggleTheme()"
+      class="w-11 h-6 bg-card border border-brd rounded-full cursor-pointer relative transition-colors duration-300 flex-shrink-0 flex items-center px-[3px]">
+      <span class="toggle-moon absolute left-[6px] text-[.65rem] pointer-events-none transition-opacity duration-300 opacity-100">🌙</span>
+      <span class="toggle-sun absolute right-[5px] text-[.65rem] pointer-events-none transition-opacity duration-300 opacity-0">☀️</span>
+    </button>
+    <button class="nav-hamburger lg:hidden flex flex-col gap-[5px] cursor-pointer bg-none border-none p-1.5" id="hamburger" aria-label="Menu">
+      <span class="block w-6 h-0.5 bg-cyan rounded-sm transition-transform duration-300"></span>
+      <span class="block w-6 h-0.5 bg-cyan rounded-sm transition-opacity duration-300"></span>
+      <span class="block w-6 h-0.5 bg-cyan rounded-sm transition-transform duration-300"></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile nav -->
+<div class="mobile-nav hidden [&.open]:flex fixed inset-x-0 top-[68px] bottom-0 bg-[color:var(--nav-bg)] z-[800] flex-col items-center justify-center gap-9 backdrop-blur-xl" id="mobileNav">
+  <a href="#" class="font-orbitron text-[1.1rem] text-muted tracking-wide transition-colors hover:text-cyan" onclick="showPage('home');closeMobileNav()">Beranda</a>
+  <a href="#" class="font-orbitron text-[1.1rem] text-muted tracking-wide transition-colors hover:text-cyan" onclick="showPage('home','about');closeMobileNav()">Program</a>
+  <a href="#" class="font-orbitron text-[1.1rem] text-muted tracking-wide transition-colors hover:text-cyan" onclick="showPage('home','program');closeMobileNav()">Kurikulum</a>
+  <a href="#" class="font-orbitron text-[1.1rem] text-muted tracking-wide transition-colors hover:text-cyan" onclick="showPage('karya');closeMobileNav()">Karya</a>
+  <a href="#" class="font-orbitron text-[1.1rem] text-muted tracking-wide transition-colors hover:text-cyan" onclick="showPage('course');closeMobileNav()">Course</a>
+  <a href="#" class="font-orbitron text-[1.1rem] text-muted tracking-wide transition-colors hover:text-cyan" onclick="showPage('challenge');closeMobileNav()">Challenge</a>
+  <a href="#" class="font-orbitron text-[1.1rem] text-muted tracking-wide transition-colors hover:text-cyan" onclick="showPage('home','achievement');closeMobileNav()">Prestasi</a>
+  <a href="#" class="font-orbitron text-[1.1rem] text-muted tracking-wide transition-colors hover:text-cyan" onclick="showPage('home','team');closeMobileNav()">Tim</a>
+  <a href="#" class="font-orbitron text-[1.1rem] text-cyan tracking-wide" onclick="showPage('home','cta');closeMobileNav()">Daftar →</a>
+</div>
+
+<!-- ═══════════════════ PAGE: HOME ═══════════════════ -->
+<div id="page-home" class="page active [&:not(.active)]:hidden">
+
+<!-- ── HERO ── -->
+<section id="hero" class="relative min-h-screen flex flex-col items-center justify-center px-6 md:px-16 pt-[100px] pb-[60px] text-center overflow-hidden">
+  <canvas id="hero-canvas" class="absolute inset-0 z-0 pointer-events-none"></canvas>
+
+  <p class="relative z-[1] inline-flex items-center gap-[.6rem] font-jet text-[.75rem] text-cyan tracking-[.14em] uppercase bg-[color:var(--tag-bg)] border border-brd px-4 py-[.4rem] rounded-full mb-7">
+    <span class="w-[7px] h-[7px] rounded-full bg-cyan animate-pulseDot"></span>
+    SMPIT Al Firdaus — ICT & Islamic Character
+  </p>
+
+  <h1 class="relative z-[1] font-orbitron text-[clamp(2.4rem,6vw,5rem)] font-black leading-[1.05] tracking-[-.02em] mb-6">
+    Cetak Generasi<br>
+    <span class="block text-transparent bg-clip-text bg-gradient-to-r from-cyan to-blue">Digital Masa Depan</span>
+  </h1>
+
+  <p class="relative z-[1] max-w-[580px] mx-auto mb-11 text-[clamp(1rem,2vw,1.15rem)] font-light text-muted leading-[1.7]">
+    Membekali siswa dengan keterampilan teknologi mutakhir — mulai dari coding, desain web, hingga AI — berlandaskan akhlakul karimah dan nilai-nilai Islami.
+  </p>
+
+  <div class="relative z-[1] flex flex-wrap gap-4 justify-center">
+    <!-- Tombol Mulai Belajar (Arahkan ke Halaman Course) -->
+    <a href="#" class="inline-flex items-center gap-[.6rem] px-8 py-[.85rem] bg-gradient-to-br from-cyan to-blue text-white font-bold font-orbitron text-[.8rem] tracking-[.08em] rounded-lg shadow-[0_0_28px_rgba(0,200,255,.35)] transition-all hover:-translate-y-0.5 hover:shadow-[0_0_44px_rgba(0,200,255,.55)]"
+      onclick="showPage('course'); return false;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12h18M12 5l7 7-7 7"/></svg>
+      Mulai Belajar
+    </a>
+    
+    <!-- Tombol Karya Siswa (Arahkan ke Halaman Karya) -->
+    <a href="#" class="inline-flex items-center gap-[.6rem] px-8 py-[.85rem] border border-brd rounded-lg text-ink text-[.9rem] transition-all hover:border-cyan hover:bg-cyan/[.06]"
+       onclick="showPage('karya'); return false;">
+      Karya Siswa
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-[1] flex flex-col items-center gap-2 text-muted text-[.7rem] tracking-[.12em] uppercase">
+    <div class="w-px h-12 bg-gradient-to-b from-cyan to-transparent animate-scrollLine"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<div id="stats" class="grid grid-cols-2 md:grid-cols-4 border-t border-b border-brd bg-bg2 relative z-20">
+  
+  <div class="stat-item reveal opacity-0 translate-y-7 transition-all duration-700 [&.visible]:opacity-100 [&.visible]:translate-y-0 flex flex-col items-center justify-center py-10 px-4 gap-1.5 border-r border-brd md:border-r border-brd hover:bg-card">
+    <span id="stat-siswa" class="font-orbitron text-[clamp(1.8rem,4vw,2.8rem)] font-bold text-cyan leading-none" data-target="0">0</span>
+    <span class="text-[.8rem] text-muted tracking-wide text-center">Siswa Aktif</span>
+  </div>
+
+  <div class="stat-item reveal opacity-0 translate-y-7 transition-all duration-700 [&.visible]:opacity-100 [&.visible]:translate-y-0 flex flex-col items-center justify-center py-10 px-4 gap-1.5 border-r border-brd md:border-r border-brd hover:bg-card">
+    <span id="stat-karya" class="font-orbitron text-[clamp(1.8rem,4vw,2.8rem)] font-bold text-cyan leading-none" data-target="0">0</span>
+    <span class="text-[.8rem] text-muted tracking-wide text-center">Karya Dipublikasikan</span>
+  </div>
+
+  <div class="stat-item reveal opacity-0 translate-y-7 transition-all duration-700 [&.visible]:opacity-100 [&.visible]:translate-y-0 flex flex-col items-center justify-center py-10 px-4 gap-1.5 border-r border-brd md:border-r border-brd hover:bg-card">
+    <span id="stat-prestasi" class="font-orbitron text-[clamp(1.8rem,4vw,2.8rem)] font-bold text-cyan leading-none" data-target="0">0</span>
+    <span class="text-[.8rem] text-muted tracking-wide text-center">Prestasi & Lomba</span>
+  </div>
+
+  <div class="stat-item reveal opacity-0 translate-y-7 transition-all duration-700 [&.visible]:opacity-100 [&.visible]:translate-y-0 flex flex-col items-center justify-center py-10 px-4 gap-1.5 hover:bg-card">
+    <span id="stat-tahun" class="font-orbitron text-[clamp(1.8rem,4vw,2.8rem)] font-bold text-cyan leading-none" data-target="0">0</span>
+    <span class="text-[.8rem] text-muted tracking-wide text-center">Tahun Berdiri</span>
+  </div>
+</div>
+
+<!-- ── ABOUT ── -->
+<section id="about" class="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-20 items-center px-6 md:px-16 py-16 md:py-32">
+  <div class="about-visual reveal opacity-0 translate-y-7 transition-all duration-700 [&.visible]:opacity-100 [&.visible]:translate-y-0 relative aspect-square max-w-[280px] md:max-w-[420px] mx-auto rounded-2xl overflow-hidden border border-cyan/30 shadow-[0_0_40px_rgba(0,200,255,0.15)] group">
+    
+    <div class="absolute inset-0 bg-gradient-to-tr from-bg/80 via-transparent to-cyan/20 z-10 pointer-events-none transition-opacity duration-500 group-hover:opacity-40"></div>
+    
+    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=800&auto=format&fit=crop" alt="Siswa ICT Belajar" class="w-full h-full object-cover relative z-0 transition-transform duration-700 group-hover:scale-105">
+    
+    <div class="absolute top-0 left-0 w-10 h-10 border-t-[3px] border-l-[3px] border-cyan z-20 rounded-tl-xl"></div>
+    <div class="absolute bottom-0 right-0 w-10 h-10 border-b-[3px] border-r-[3px] border-cyan z-20 rounded-br-xl"></div>
+  </div>
+  <div>
+    <p class="reveal opacity-0 translate-y-7 transition-all duration-700 [&.visible]:opacity-100 [&.visible]:translate-y-0 inline-block font-jet text-[.7rem] text-cyan tracking-[.16em] uppercase mb-4 opacity-80">// Visi & Karakter</p>
+    
+    <h2 class="reveal opacity-0 translate-y-7 transition-all duration-700 [&.visible]:opacity-100 [&.visible]:translate-y-0 font-orbitron text-[clamp(1.6rem,3.5vw,2.8rem)] font-bold leading-[1.15] mb-4">Teknologi Terdepan, <br><span class="text-cyan">Akhlak Terjaga.</span></h2>
+    
+    <p class="reveal opacity-0 translate-y-7 transition-all duration-700 [&.visible]:opacity-100 [&.visible]:translate-y-0 text-[1rem] text-muted max-w-[560px] leading-[1.8]">
+      Program Unggulan ICT SMPIT Al Firdaus dirancang untuk mencetak kreator digital masa depan. Kami memadukan <em>project-based learning</em> berstandar industri dengan penguatan karakter Islami, melahirkan generasi Rabbani yang cakap teknologi dan siap berdakwah di era digital.
+    </p>
+
+    <!-- Kotak Kutipan Islami -->
+    <div class="reveal opacity-0 translate-y-7 transition-all duration-700 [&.visible]:opacity-100 [&.visible]:translate-y-0 mt-7 mb-2 p-5 border-l-[3px] border-cyan bg-cyan/[.05] rounded-r-lg relative overflow-hidden max-w-[560px]">
+      <div class="absolute -right-2 -top-6 text-[5rem] text-cyan opacity-[0.07] font-serif">"</div>
+      <p class="text-[.9rem] text-muted italic leading-relaxed relative z-10">
+        "Barangsiapa menempuh suatu jalan untuk menuntut ilmu, maka Allah subhanahu wa ta'ala akan mudahkan baginya jalan menuju surga."
+      </p>
+      <p class="text-[.75rem] text-cyan mt-3 font-semibold font-jet tracking-wide relative z-10">— HR. Muslim</p>
+    </div>
+    
+    <!-- Wadah Kurikulum Grid Singkat -->
+    <div class="mt-8 flex flex-wrap justify-center gap-4" id="aboutKurikulumGrid"></div>
+  </div>
+</section>
+
+<!-- ── PROGRAM ── -->
+<section id="program" class="bg-bg2 px-6 md:px-16 py-16 md:py-32">
+  <div class="flex flex-wrap justify-between items-end gap-6 mb-12">
+    <div>
+      <p class="font-jet text-[.7rem] text-cyan tracking-[.16em] uppercase mb-4 opacity-80">// kurikulum ict</p>
+      <h2 class="font-orbitron text-[clamp(1.6rem,3.5vw,2.8rem)] font-bold leading-[1.15]">Apa yang Kamu <span class="text-cyan">Pelajari</span></h2>
+    </div>
+    <p class="text-[1rem] text-muted leading-[1.8] max-w-[340px] m-0">Dirancang sesuai standar industri digital terkini yang relevan untuk siswa SMP.</p>
+  </div>
+
+  <!-- ⬅️ PERUBAHAN: Ini adalah wadah kosong yang akan diisi oleh Javascript -->
+  <div class="flex flex-wrap justify-center gap-6" id="kurikulumGrid"></div>
+</section>
+
+<!-- ── ACHIEVEMENT ── -->
+<section id="achievement" class="bg-bg2 px-6 md:px-16 py-16 md:py-32">
+  <p class="font-jet text-[.7rem] text-cyan tracking-[.16em] uppercase mb-4 opacity-80">// prestasi & kompetisi</p>
+  <h2 class="font-orbitron text-[clamp(1.6rem,3.5vw,2.8rem)] font-bold leading-[1.15]">Bukti <span class="text-cyan">Nyata</span> yang Bicara</h2>
+  <div class="flex flex-wrap justify-center gap-5 mt-12" id="achieveGrid"></div>
+</section>
+
+<!-- ── TEAM ── -->
+<section id="team" class="bg-bg3 text-center px-6 md:px-16 py-16 md:py-32">
+  <p class="font-jet text-[.7rem] text-cyan tracking-[.16em] uppercase mb-4 opacity-80">// tim pengajar</p>
+  <h2 class="font-orbitron text-[clamp(1.6rem,3.5vw,2.8rem)] font-bold leading-[1.15]">Dipandu oleh <span class="text-cyan">Pengajar Terbaik</span></h2>
+  <p class="text-[1rem] text-muted leading-[1.8] mx-auto m-0">Tenaga pendidik berpengalaman dengan latar belakang industri teknologi dan dunia pendidikan.</p>
+  <div class="flex flex-wrap justify-center gap-8 mt-12" id="teamGrid"></div>
+</section>
+
+<!-- ── CTA ── -->
+<section id="cta" class="text-center relative overflow-hidden bg-gradient-to-br from-bg2 to-bg border-t border-brd px-6 md:px-16 py-16 md:py-32">
+  <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full pointer-events-none [background:radial-gradient(circle,rgba(0,200,255,.08)_0%,transparent_70%)]"></div>
+  <div class="relative z-[1]">
+    <p class="font-jet text-[.7rem] text-cyan tracking-[.16em] uppercase mb-4 opacity-80 justify-center flex">// bergabung sekarang</p>
+    <h2 class="font-orbitron text-[clamp(1.8rem,4vw,3rem)] font-black mb-4">Siap Jadi <span class="text-cyan">Generasi Digital</span>?</h2>
+    <p class="text-muted max-w-[480px] mx-auto mb-10 leading-[1.7]">Daftarkan putra-putrimu ke Program Unggulan ICT SMPIT Al Firdaus Purwodadi. Tempat terbatas untuk angkatan baru.</p>
+    <div class="flex gap-4 justify-center flex-wrap">
+      <a href="#" id="cta-wa" target="_blank"
+         class="inline-flex items-center gap-[.6rem] px-8 py-[.85rem] bg-gradient-to-br from-cyan to-blue text-white font-bold font-orbitron text-[.8rem] tracking-[.08em] rounded-lg shadow-[0_0_28px_rgba(0,200,255,.35)] transition-all hover:-translate-y-0.5 hover:shadow-[0_0_44px_rgba(0,200,255,.55)]">
+        Hubungi via WhatsApp
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER UTAMA ── -->
+<footer class="border-t border-brd px-6 md:px-16 py-10 flex flex-col md:flex-row justify-between items-center gap-8 bg-bg">
+  
+  <!-- Brand & Copyright -->
+  <div class="flex flex-col items-center md:items-start gap-2">
+    <div class="font-orbitron text-[.95rem] font-bold"><span class="text-cyan">ICT</span> Class — SMPIT Al Firdaus</div>
+    <div class="text-[.75rem] text-muted">© 2026 Program Unggulan ICT. All rights reserved.</div>
+  </div>
+  
+  <!-- Sosial Media -->
+  <div class="flex items-center gap-3">
+    <!-- YouTube -->
+    <a href="https://youtube.com/" target="_blank" class="w-10 h-10 rounded-full bg-card border border-brd flex items-center justify-center text-muted transition-all duration-300 hover:text-[#FF0000] hover:border-[#FF0000] hover:-translate-y-1 hover:shadow-[0_4px_15px_rgba(255,0,0,0.2)]" aria-label="YouTube">
+      <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+    </a>
+    <!-- Instagram -->
+    <a href="https://instagram.com/" target="_blank" class="w-10 h-10 rounded-full bg-card border border-brd flex items-center justify-center text-muted transition-all duration-300 hover:text-[#E1306C] hover:border-[#E1306C] hover:-translate-y-1 hover:shadow-[0_4px_15px_rgba(225,48,108,0.2)]" aria-label="Instagram">
+      <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+    </a>
+    <!-- TikTok -->
+    <a href="https://tiktok.com/" target="_blank" class="w-10 h-10 rounded-full bg-card border border-brd flex items-center justify-center text-muted transition-all duration-300 hover:text-cyan hover:border-cyan hover:-translate-y-1 hover:shadow-[0_4px_15px_rgba(0,200,255,0.2)]" aria-label="TikTok">
+      <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 2.78-1.15 5.54-3.14 7.55-2.22 2.22-5.46 3.19-8.5 2.58-3.04-.6-5.61-2.73-6.8-5.59-1.18-2.84-1.04-6.22.46-8.91 1.5-2.69 4.31-4.57 7.37-5.11 1.34-.23 2.72-.25 4.07-.06V11.5c-2.31-.41-4.79.08-6.66 1.63-1.87 1.56-2.82 4.09-2.39 6.46.43 2.37 2.14 4.35 4.4 5.11 2.27.75 4.85.34 6.74-1.1 1.89-1.45 2.97-3.79 2.93-6.19-.05-4.86-.02-9.73-.04-14.59.39.02.79.04 1.18.04z"/></svg>
+    </a>
+  </div>
+  
+  <!-- Navigasi -->
+  <div class="flex gap-6 flex-wrap justify-center">
+    <a href="#" class="text-[.78rem] text-muted transition-colors hover:text-cyan" onclick="showPage('home','about'); return false;">Program</a>
+    <a href="#" class="text-[.78rem] text-muted transition-colors hover:text-cyan" onclick="showPage('karya'); return false;">Karya</a>
+    <a href="#" class="text-[.78rem] text-muted transition-colors hover:text-cyan" onclick="showPage('home','cta'); return false;">Kontak</a>
+  </div>
+</footer>
+
+</div><!-- end #page-home -->
+
+<!-- ═══════════════════ PAGE: CHALLENGE ═══════════════════ -->
+<div id="page-challenge" class="page [&:not(.active)]:hidden bg-bg">
+
+  <div class="bg-gradient-to-br from-bg2 to-bg border-b border-brd pt-[120px] pb-12 px-6 md:px-16 text-center">
+    <div class="max-w-[640px] mx-auto">
+      <p class="font-jet text-[.7rem] text-cyan tracking-[.16em] uppercase mb-4 opacity-80">// Terbuka Untuk Umum</p>
+      <h1 class="font-orbitron text-[clamp(1.6rem,3.5vw,2.8rem)] font-bold leading-[1.15] mb-4">ICT <span class="text-cyan">Challenge</span></h1>
+      <p class="text-[1rem] text-muted leading-[1.8] mx-auto">
+        Implementasi program <em>ICT Skill Maintenance</em> untuk siswa-siswi non-ICT. Kerjakan misi mingguan ini untuk mengasah logika dan kreativitas digitalmu!
+      </p>
+    </div>
+  </div>
+
+  <!-- LAYOUT KIRI KANAN (Tugas & Papan Peringkat) -->
+  <!-- Di HP: Peringkat muncul di atas tugas. Di Laptop: Peringkat diam di sisi kanan. -->
+  <div class="px-6 md:px-16 py-10 md:py-20 max-w-[1300px] mx-auto flex flex-col-reverse lg:flex-row gap-8 items-start">
+    
+    <!-- KIRI: WADAH KARTU TUGAS -->
+
+    <div class="w-full lg:w-2/3">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="challengeGrid"></div>
+      
+      <div id="challengePagination" class="flex justify-center items-center gap-2 mt-12"></div>
+    </div>
+
+    <!-- KANAN: LEADERBOARD -->
+    <div class="w-full lg:w-1/3 lg:sticky lg:top-[100px] relative z-10">
+      <div class="bg-card border border-brd rounded-[14px] p-6 shadow-[0_8px_30px_rgba(0,0,0,0.12)]">
+        
+        <div class="flex items-center justify-between mb-4 border-b border-brd pb-4">
+          <h2 class="font-orbitron text-[1.2rem] font-bold text-ink flex items-center gap-2">
+            <span class="text-xl">🏆</span> Top 10 Rank
+          </h2>
+          <!-- Lencana GLOBAL -->
+          <span id="lb-badge-mode" class="font-jet text-[.65rem] text-cyan bg-cyan/10 px-2 py-1 rounded border border-cyan/20">GLOBAL</span>
+        </div>
+        
+        <!-- ⬅️ TAMBAHAN: Wadah Tab Mode Pisah (Sembunyi by default) -->
+        <div id="lb-tabs" class="hidden flex gap-2 mb-4">
+           <button onclick="switchLbTab('ict')" id="btn-tab-ict" class="flex-1 py-1.5 text-[.8rem] font-bold rounded-md bg-cyan text-bg transition-colors">Kelas ICT</button>
+           <button onclick="switchLbTab('reguler')" id="btn-tab-reg" class="flex-1 py-1.5 text-[.8rem] font-bold rounded-md border border-brd text-muted hover:border-cyan hover:text-cyan transition-colors">Reguler</button>
+        </div>
+        
+        <!-- WADAH LIST RANKING (Diisi Otomatis dari JS) -->
+        <div id="leaderboardContainer" class="flex flex-col gap-3"></div>
+        
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-brd px-6 md:px-16 py-10 flex flex-wrap justify-between items-center gap-4 bg-bg">
+    <div class="font-orbitron text-[.85rem]"><span class="text-cyan">ICT</span> Class — SMPIT Al Firdaus</div>
+    <div class="text-[.75rem] text-muted">© 2026 Program Unggulan ICT. All rights reserved.</div>
+    <div class="flex gap-6">
+      <a href="#" class="text-[.78rem] text-muted transition-colors hover:text-cyan" onclick="showPage('home');return false;">Beranda</a>
+    </div>
+  </footer>
+
+</div><!-- end #page-challenge -->
+
+<!-- ═══════════════════ PAGE: KARYA ═══════════════════ -->
+<div id="page-karya" class="page [&:not(.active)]:hidden bg-bg">
+
+  <!-- Header Galeri -->
+  <div class="bg-gradient-to-br from-bg2 to-bg border-b border-brd pt-[120px] pb-12 px-6 md:px-16 text-center">
+    <div class="max-w-[640px] mx-auto">
+      <p class="font-jet text-[.7rem] text-cyan tracking-[.16em] uppercase mb-4 opacity-80">// Portofolio Digital</p>
+      <h1 class="font-orbitron text-[clamp(1.6rem,3.5vw,2.8rem)] font-bold leading-[1.15] mb-4">Galeri <span class="text-cyan">Karya Siswa</span></h1>
+      <p class="text-[1rem] text-muted leading-[1.8] mx-auto">
+        Eksplorasi mahakarya digital siswa-siswi ICT SMPIT Al Firdaus. Dari pengembangan web, desain grafis, hingga game interaktif.
+      </p>
+    </div>
+  </div>
+
+  <div class="px-6 md:px-16 py-10 md:py-20 max-w-6xl mx-auto">
+    <!-- Filter Kategori -->
+    <div id="karyaFilterContainer" class="flex gap-3 flex-wrap justify-center mb-12">
+      
+    </div>
+
+    <!-- Grid Container -->
+    <div class="flex flex-wrap justify-center gap-6" id="galleryGrid"></div>
+    
+    <!-- Pagination Container -->
+    <div id="galleryPagination" class="flex justify-center items-center gap-2 mt-12"></div>
+  </div>
+
+  <!-- Footer Singkat -->
+  <footer class="border-t border-brd px-6 md:px-16 py-10 flex flex-wrap justify-between items-center gap-4 bg-bg">
+    <div class="font-orbitron text-[.85rem]"><span class="text-cyan">ICT</span> Class — SMPIT Al Firdaus</div>
+    <div class="flex gap-6">
+      <a href="#" class="text-[.78rem] text-muted transition-colors hover:text-cyan" onclick="showPage('home');return false;">Kembali ke Beranda</a>
+    </div>
+  </footer>
+
+</div><!-- end #page-karya -->
+
+<!-- ═══════════════════ PAGE: COURSE ═══════════════════ -->
+<div id="page-course" class="page [&:not(.active)]:hidden bg-bg">
+
+  <!-- Header Course -->
+  <div class="bg-gradient-to-br from-bg2 to-bg border-b border-brd pt-[120px] pb-12 px-6 md:px-16 text-center">
+    <div class="max-w-[700px] mx-auto">
+      <p class="font-jet text-[.7rem] text-[#FFD700] tracking-[.16em] uppercase mb-4 opacity-90">// Free & Premium Class</p>
+      <h1 class="font-orbitron text-[clamp(1.6rem,3.5vw,2.8rem)] font-bold leading-[1.15] mb-4">Materi <span class="text-cyan">Belajar</span></h1>
+      <p class="text-[1rem] text-muted leading-[1.8] mx-auto">
+        Jelajahi modul pembelajaran ICT yang interaktif. Nikmati materi gratis, atau bergabung bersama Program Unggulan ICT untuk mengakses <strong>seluruh materi eksklusif.</strong>
+      </p>
+    </div>
+  </div>
+
+  <div class="px-6 md:px-16 py-10 md:py-20 max-w-5xl mx-auto" id="courseContainer">
+    <!-- Konten Timeline akan dirender oleh JavaScript di sini -->
+  </div>
+
+  <!-- Footer Singkat (Opsional) -->
+  <footer class="border-t border-brd px-6 md:px-16 py-10 flex flex-wrap justify-between items-center gap-4 bg-bg">
+    <div class="font-orbitron text-[.85rem]"><span class="text-cyan">ICT</span> Class — SMPIT Al Firdaus</div>
+    <div class="flex gap-6">
+      <a href="#" class="text-[.78rem] text-muted transition-colors hover:text-cyan" onclick="showPage('home');return false;">Kembali ke Beranda</a>
+    </div>
+  </footer>
+</div>
+<!-- ═══════════════════ END OF PAGE: COURSE ═══════════════════ -->
+
+
+<!-- ── MODAL COURSE (STYLE LMS) UNTUK MENONTON VIDEO ── -->
+<div class="modal-overlay hidden [&.open]:flex fixed inset-0 z-[1100] bg-black/95 backdrop-blur-md items-start justify-center overflow-y-auto p-0 md:p-6 transition-all duration-300" id="courseModal" onclick="if(event.target === this) closeCourseModal()">
+  
+  <div class="bg-[color:var(--modal-bg)] border border-brd md:rounded-2xl w-full md:max-w-[900px] flex flex-col relative shadow-[0_0_50px_rgba(0,0,0,0.5)] my-auto min-h-screen md:min-h-0">
+    
+    <!-- Tombol Tutup Modal (X) -->
+    <button class="absolute top-4 right-4 bg-black/60 hover:bg-[#FF0000] text-white w-9 h-9 rounded-full flex items-center justify-center z-50 transition-colors cursor-pointer border border-white/10 backdrop-blur-sm" onclick="closeCourseModal()">✕</button>
+    
+    <!-- Wadah Video YouTube / Banner Iklan -->
+    <div class="w-full aspect-video bg-black relative flex-shrink-0" id="courseVideoContainer"></div>
+    
+    <!-- Bagian Deskripsi & Tombol Download -->
+    <div class="p-6 md:p-8 bg-bg md:rounded-b-2xl flex-grow">
+      <h2 class="font-orbitron text-[1.4rem] md:text-[1.8rem] font-bold text-ink mb-6" id="courseTitle">Judul Materi</h2>
+      <div class="text-muted text-[.95rem] leading-[1.8] pb-4" id="courseDesc"></div>
+    </div>
+
+  </div>
+  
+</div>
+
+<!-- ── MODAL DETAIL BAB (LIST MATERI) ── -->
+<div class="modal-overlay hidden [&.open]:flex fixed inset-0 z-[1050] bg-black/90 backdrop-blur-sm items-center justify-center p-4 md:p-6 transition-all duration-300" id="babModal" onclick="if(event.target === this) closeBabModal()">
+   <div class="bg-[color:var(--modal-bg)] border border-brd rounded-2xl w-full max-w-[700px] flex flex-col relative max-h-[85vh] shadow-[0_0_50px_rgba(0,200,255,0.15)] overflow-hidden">
+      
+      <!-- Tombol Close -->
+      <button class="absolute top-4 right-4 bg-black/50 hover:bg-[#FF0000] text-white w-8 h-8 rounded-full flex items-center justify-center z-50 transition-colors cursor-pointer border border-white/10" onclick="closeBabModal()">✕</button>
+      
+      <!-- Header Modal -->
+      <div class="p-6 md:p-8 border-b border-brd bg-bg2 flex flex-col sm:flex-row items-center sm:items-start gap-5">
+         <div class="w-24 h-24 rounded-xl overflow-hidden flex-shrink-0 shadow-lg border border-brd" id="babModalThumb"></div>
+         <div class="text-center sm:text-left mt-2 sm:mt-0">
+            <h2 class="font-orbitron text-xl md:text-2xl font-bold text-ink mb-2" id="babModalTitle">Judul Bab</h2>
+            <p class="text-[.85rem] text-muted leading-relaxed" id="babModalDesc">Deskripsi bab akan muncul di sini.</p>
+         </div>
+      </div>
+      
+      <!-- List Materi -->
+      <div class="p-4 md:p-6 overflow-y-auto flex-grow bg-bg custom-scrollbar" id="babModalMateriList">
+         <!-- List materi (dengan ikon 🔒 / ▶️) akan dirender di sini -->
+      </div>
+      
+   </div>
+</div>
+
+<!-- ── MODAL ── -->
+<div class="modal-overlay hidden [&.open]:flex fixed inset-0 z-[1000] bg-black/75 backdrop-blur-md items-center justify-center p-4 md:p-8" id="modal" onclick="closeModalOnOverlay(event)">
+  
+  <!-- PERUBAHAN: Ditambahkan max-h-[90vh] dan overflow-y-auto agar bisa di-scroll -->
+  <div class="bg-[color:var(--modal-bg)] border border-brd rounded-2xl max-w-[620px] w-full p-6 md:p-10 relative max-h-[90vh] overflow-y-auto shadow-2xl">
+    
+    <!-- PERUBAHAN: Tombol close dibuat memiliki background agar tetap terlihat jelas -->
+    <button class="absolute top-4 right-4 bg-[color:var(--nav-bg)] border border-brd rounded-full w-8 h-8 flex items-center justify-center text-muted text-[1.1rem] cursor-pointer transition-colors hover:text-cyan z-10" onclick="closeModal()">✕</button>
+    
+    <div class="aspect-video rounded-[10px] bg-[color:var(--thumb-bg)] flex items-center justify-center text-[5rem] mb-6 relative overflow-hidden" id="modalThumb"></div>
+    <div class="font-jet text-[.7rem] text-cyan tracking-[.1em] mb-3" id="modalBadge"></div>
+    <h3 class="font-orbitron text-[1.3rem] mb-3" id="modalTitle"></h3>
+    <p class="text-[.9rem] text-muted leading-[1.8] whitespace-pre-wrap" id="modalDesc"></p>
+    <div id="modalLinks" class="mt-7 flex flex-wrap gap-3 border-t border-brd pt-5"></div>
+    
+  </div>
+</div>
+
+<!-- ── MODAL CHALLENGE DETAIL (STYLE LMS) ── -->
+<div class="modal-overlay hidden [&.open]:flex fixed inset-0 z-[1100] bg-black/95 backdrop-blur-md items-start justify-center overflow-y-auto p-0 md:p-6 transition-all duration-300" id="challengeModal" onclick="if(event.target === this) closeChallengeModal()">
+  <div class="bg-[color:var(--modal-bg)] border border-brd md:rounded-2xl w-full md:max-w-[900px] flex flex-col relative shadow-[0_0_50px_rgba(0,0,0,0.5)] my-auto min-h-screen md:min-h-0">
+    
+    <!-- Tombol Tutup (Silang) -->
+    <button class="absolute top-4 right-4 bg-black/60 hover:bg-[#FF0000] text-white w-9 h-9 rounded-full flex items-center justify-center z-50 transition-colors cursor-pointer border border-white/10 backdrop-blur-sm" onclick="closeChallengeModal()">✕</button>
+
+    <!-- Wadah Video YouTube -->
+    <div class="w-full aspect-video bg-black relative flex-shrink-0" id="challengeVideoContainer">
+      <!-- iframe YouTube akan masuk ke sini -->
+    </div>
+
+    <!-- Konten & Instruksi -->
+    <div class="p-6 md:p-8 bg-bg md:rounded-b-2xl">
+      
+      <!-- Header & Tombol Form Pengumpulan -->
+      <div class="flex flex-col md:flex-row md:items-start justify-between gap-5 mb-6">
+        <div>
+          <h2 class="font-orbitron text-[1.5rem] md:text-[2rem] font-bold text-ink mb-1" id="challengeTitle">Judul Tugas</h2>
+          <p class="text-muted text-[.9rem] font-jet" id="challengeMeta">Materi bagian: ...</p>
+        </div>
+        
+        <!-- Tombol Menuju Form -->
+        <a href="#" target="_blank" id="challengeFormBtn" class="inline-flex justify-center items-center px-6 py-2.5 bg-cyan hover:bg-cyan-dim text-navy font-bold rounded-full transition-colors whitespace-nowrap shadow-[0_4px_15px_rgba(0,200,255,0.3)]">
+          🚀 Kumpulkan Tugas
+        </a>
+      </div>
+
+      <!-- Detail Instruksi (Akan diisi otomatis oleh JS) -->
+      <div class="text-muted text-[.95rem] leading-[1.8] pb-4" id="challengeDesc">
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="script.js?v=20260707"></script>
+</body>
+</html>

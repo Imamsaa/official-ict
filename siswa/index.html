@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#1e1b4b">
+<title>Portal Siswa · ICT Al Firdaus</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css"> 
+<style>
+  /* ════ PERBAIKAN TAMPILAN LOGIN ════ */
+  #login-screen {
+    min-height: 100vh;
+    background: linear-gradient(160deg, #f8f9fb 0%, #eef4ff 100%);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 28px 20px;
+  }
+
+  /* Tambahan khusus tombol aksi Siswa */
+  .btn-action-lg {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; padding: 14px; border-radius: 12px; border: none;
+    font-size: 14px; font-weight: 700; color: white; transition: 0.2s ease; cursor: pointer; text-decoration: none;
+  }
+  .btn-form { background: #2563eb; }
+  .btn-form:hover { background: #1d4ed8; }
+  .btn-submit { background: #16a34a; }
+  .btn-submit:hover { background: #15803d; }
+  .todo-card { border-left: 4px solid #f59e0b; }
+
+  .udemy-layout { display: flex; flex-direction: column-reverse; gap: 20px; padding: 0 14px 24px; }
+  .udemy-left { flex: 1; min-width: 0; }
+  .udemy-right { width: 100%; background: white; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; display: flex; flex-direction: column; }
+  .udemy-right-header { padding: 16px; font-size: 14px; font-weight: 800; color: #0f172a; border-bottom: 1px solid #e2e8f0; background: #f8fafc; }
+  .udemy-list-container { max-height: 350px; overflow-y: auto; }
+  
+  /* Pengaturan Desktop (Layar Lebar) */
+  @media (min-width: 960px) {
+    .udemy-layout { flex-direction: row; padding: 0 24px 24px; align-items: flex-start; }
+    .udemy-right { width: 360px; flex-shrink: 0; position: sticky; top: 90px; }
+    .udemy-list-container { max-height: calc(100vh - 180px); }
+  }
+  
+  .tugas-sidebar-item:hover { background: #f8fafc; }
+</style>
+</head>
+<body>
+
+<div id="login-screen"> 
+  <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:28px;">
+    <div style="width:72px;height:72px;border-radius:20px;background:linear-gradient(145deg,#0a2550,#1a56cc);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 28px rgba(16,64,160,0.30);margin-bottom:16px;">
+      <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><rect x="5" y="9" width="38" height="24" rx="3.5" stroke="white" stroke-width="2.2" fill="none"/><path d="M16 18l-4 4 4 4M32 18l4 4-4 4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 26l6-8" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+    </div>
+    <h1 style="font-size:22px;font-weight:700;color:#111827;margin-bottom:4px;">Portal Siswa</h1>
+    <p style="font-size:13px;color:#9ca3af;">Masuk untuk mulai belajar</p>
+  </div>
+
+  <div class="login-card">
+    <p style="font-size:12px;font-weight:700;color:#6b7280;margin-bottom:8px;">👤 USERNAME (NIS)</p>
+    <input id="inp-kode" class="login-input" type="text" placeholder="Masukkan NIS" style="text-align:center; font-weight:700; letter-spacing: 2px;">
+    
+    <p style="font-size:12px;font-weight:700;color:#6b7280;margin-bottom:8px; margin-top:16px;">🔑 PASSWORD</p>
+    <input id="inp-pass" class="login-input" type="password" placeholder="Password (Default: 123456)" style="text-align:center; font-weight:700; letter-spacing: 2px;">
+    
+    <button id="btn-login" class="login-btn" onclick="doLogin()" style="margin-top:20px;">Mulai Belajar</button>
+    <p id="login-err" class="hidden" style="text-align:center;color:#dc2626;font-size:12px;font-weight:600;margin-top:12px;"></p>
+  </div>
+</div>
+
+<div id="profile-screen" class="hidden">
+  
+  <div class="desktop-header">
+    <div class="dh-logo">
+      <div class="sb-logo-icon">
+        <svg width="20" height="20" viewBox="0 0 48 48" fill="none"><rect x="5" y="9" width="38" height="24" rx="3.5" stroke="white" stroke-width="2.2"/><path d="M16 18l-4 4 4 4M32 18l4 4-4 4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 26l6-8" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>
+      <div>
+        <div style="font-weight:700; color:white; font-size:16px;">Portal Siswa</div>
+        <div style="font-size:11px; color:rgba(255,255,255,0.7);">ICT Al Firdaus</div>
+      </div>
+    </div>
+    <!-- KELOMPOK TOMBOL KANAN (DESKTOP) -->
+    <div style="display:flex; gap:10px; align-items:center;">
+      <button class="dh-logout" onclick="manualRefresh()" title="Segarkan Data" style="width:36px; padding:0; background:rgba(255,255,255,0.1);">
+        <svg class="refresh-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 1 0 2.13-5.83L2 9"/></svg>
+      </button>
+      <button class="dh-logout" onclick="doLogout()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Keluar
+      </button>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sb-profile" style="margin-top: 10px;">
+      <div class="sb-welcome">Halo, selamat belajar!</div>
+      <div class="sb-name" id="sb-nama">Memuat...</div>
+      <div class="sb-meta">
+        <span class="sb-badge"><span id="sb-kelas">Kelas -</span></span>
+      </div>
+    </div>
+    
+    <div class="sb-nav">
+      <button class="sb-nav-item active" id="sbn-beranda" onclick="switchPage('beranda')">
+        <div class="sb-nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+        <span class="sb-nav-label">Beranda</span>
+      </button>
+      <button class="sb-nav-item" id="sbn-materi" onclick="switchPage('materi')">
+        <div class="sb-nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+        <span class="sb-nav-label">Materi Pembelajaran</span>
+      </button>
+      <button class="sb-nav-item" id="sbn-tugas" onclick="switchPage('tugas')">
+        <div class="sb-nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        <span class="sb-nav-label">Tugas Mingguan</span>
+      </button>
+      <button class="sb-nav-item" id="sbn-jadwal" onclick="switchPage('jadwal')">
+        <div class="sb-nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <span class="sb-nav-label">Jadwal Kelas</span>
+      </button>
+      <!-- Tombol Baru Portofolio -->
+      <button class="sb-nav-item" id="sbn-portofolio" onclick="switchPage('portofolio')">
+        <div class="sb-nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg></div>
+        <span class="sb-nav-label">Portofolio Karya</span>
+      </button>
+
+      <!-- Tombol Profil (Diubah teksnya) -->
+      <button class="sb-nav-item" id="sbn-profil" onclick="switchPage('profil')">
+        <div class="sb-nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+        <span class="sb-nav-label">Profil Akun</span>
+      </button>
+    </div>
+    
+    <div class="sb-stats" style="grid-template-columns: 1fr;">
+      <div class="sb-stat-item" style="border-right: none;">
+        <div class="sb-stat-num" id="sb-poin">0</div>
+        <div class="sb-stat-lbl">Total Poin Tugas</div>
+      </div>
+    </div>
+  </aside>
+
+  <div style="flex:1; display:flex; flex-direction:column; min-width:0; position:relative;">
+    
+    <div class="mobile-topbar" style="border-radius: 0 0 24px 24px;">
+      <div class="mob-tb-row">
+        <div class="mob-logo">
+          <div class="mob-logo-icon">
+            <svg width="19" height="19" viewBox="0 0 48 48" fill="none"><rect x="5" y="9" width="38" height="24" rx="3.5" stroke="white" stroke-width="2.2" fill="none"/><path d="M16 18l-4 4 4 4M32 18l4 4-4 4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 26l6-8" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+          </div>
+          <div>
+            <div class="mob-logo-text">Portal Siswa</div>
+            <div class="mob-logo-sub">ICT Al Firdaus</div>
+          </div>
+        </div>
+        <div style="display:flex; gap:8px;">
+        <button class="mob-logout" onclick="manualRefresh()" title="Segarkan Data">
+          <svg class="refresh-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 1 0 2.13-5.83L2 9"/></svg>
+        </button>
+        <button class="mob-logout" onclick="doLogout()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+      </div>
+      </div>
+      <div class="mob-profile">
+        <div class="mob-welcome">Halo, selamat belajar!</div>
+        <div class="mob-name" id="s-nama">Memuat...</div>
+        <div class="mob-meta">
+          <span class="mob-badge">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            <span id="s-kelas">Kelas -</span>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <main class="content-area">
+
+      <!-- HALAMAN: BERANDA -->
+      <div id="page-beranda" class="page active" style="padding-top:16px;">
+        
+        <!-- Wadah Skor (Full Width di atas) -->
+        <div id="beranda-skor"></div>
+
+        <!-- Sedikit CSS tambahan agar padding rapi di HP dan PC -->
+        <style>
+          .b-col { padding: 0 14px; margin-bottom: 24px; }
+          @media (min-width: 960px) { 
+            .b-col { padding: 0; margin-bottom: 0; } 
+          }
+        </style>
+
+        <!-- WADAH GRID KIRI-KANAN (Otomatis dari style.css bawaan) -->
+        <div class="beranda-grid">
+          
+          <!-- ================= KOLOM KIRI: MATERI ================= -->
+          <div class="col-left b-col">
+            <div class="page-intro" style="display:flex; justify-content:space-between; align-items:center; padding:0 0 12px 0;">
+              <span>📚 Tanggungan Materi</span>
+            </div>
+            
+            <div style="margin-bottom: 12px;">
+              <input type="text" id="search-materi" class="login-input" style="width:100%; padding:12px 14px; border-radius:10px; border:1px solid #e5e7eb; font-size:13px; font-weight:normal; margin:0;" placeholder="🔍 Cari nama materi atau modul..." oninput="filterTodoMateri()">
+            </div>
+            
+            <!-- List dan Pagination Materi -->
+            <div id="todo-materi-list" style="display:flex; flex-direction:column; gap:12px;"></div>
+            <div id="todo-materi-pagination" style="padding: 12px 0; display:flex; justify-content:center; gap:8px;"></div>
+          </div>
+
+
+          <!-- ================= KOLOM KANAN: TUGAS ================= -->
+          <div class="col-right b-col">
+            <div class="page-intro" style="display:flex; justify-content:space-between; align-items:center; padding:0 0 12px 0;">
+              <span>🚀 Tugas Mingguan Praktik</span>
+            </div>
+            
+            <div style="margin-bottom: 12px;">
+              <input type="text" id="search-tugas" class="login-input" style="width:100%; padding:12px 14px; border-radius:10px; border:1px solid #e5e7eb; font-size:13px; font-weight:normal; margin:0;" placeholder="🔍 Cari nama tugas mingguan..." oninput="filterTodoTugas()">
+            </div>
+            
+            <!-- List dan Pagination Tugas -->
+            <div id="todo-tugas-list" style="display:flex; flex-direction:column; gap:12px;"></div>
+            <div id="todo-tugas-pagination" style="padding: 12px 0; display:flex; justify-content:center; gap:8px;"></div>
+          </div>
+
+        </div> <!-- End of .beranda-grid -->
+      </div>
+
+      <div id="page-jadwal" class="page" style="padding-top:16px;">
+        <div class="page-intro">📅 Jadwal Kelas</div>
+        <div class="page-sub">Jadwal pelajaran dan pertemuan di sekolah</div>
+        <div id="jadwal-list" style="margin-top:12px;"></div>
+      </div>
+      <!-- HALAMAN: MATERI -->
+    <div id="page-materi" class="page" style="padding-top:16px;">
+      
+      <!-- TAMPILAN 1: GRID BAB (Tampil pertama kali) -->
+      <div id="view-bab-page">
+        <div class="page-intro">📚 Modul Materi</div>
+        <div class="page-sub">Pilih bab untuk melihat daftar materi</div>
+        <div id="bab-grid" class="bab-grid" style="margin-top:8px;"></div>
+      </div>
+
+      <!-- TAMPILAN 2: DAFTAR MATERI (Tersembunyi, muncul setelah Bab diklik) -->
+      <div id="view-materi-page" class="hidden">
+        <div class="page-header" style="padding:0 14px 12px; display:flex; align-items:center; gap:12px; border-bottom:1px solid #e5e7eb; margin-bottom:16px;">
+          <button class="back-btn" onclick="backToBab()" style="width:36px; height:36px; border-radius:10px; border:none; background:#f3f4f6; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+          </button>
+          <div>
+            <div style="font-size:12px; color:#6b7280; font-weight:600; line-height:1;">Daftar Materi</div>
+            <div class="page-title" id="materi-bab-title" style="font-size:16px; font-weight:800; color:#111827; margin-top:2px;">Judul Bab</div>
+          </div>
+        </div>
+        
+        <div class="udemy-layout">
+          <!-- KIRI: Konten Utama Materi (Video, Slide, Form) -->
+          <div class="udemy-left" id="materi-content-panel">
+             <div style="text-align:center; padding: 60px 20px; background:white; border-radius:16px; border:1px dashed #cbd5e1; color:#64748b;">
+                Pilih modul di daftar sebelah kanan untuk mulai belajar.
+             </div>
+          </div>
+          
+          <!-- KANAN: Sidebar Daftar Modul Materi -->
+          <div class="udemy-right">
+             <div class="udemy-right-header">Isi Bab (<span id="materi-count-header">0</span> Modul)</div>
+             <div id="materi-list-sidebar" class="udemy-list-container custom-scrollbar"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+      <div id="page-tugas" class="page" style="padding-top:16px;">
+        <div class="page-intro" style="padding-bottom:16px;">📅 Tugas Praktik Mingguan</div>
+
+        <div class="udemy-layout">
+          <!-- KIRI: Konten Utama (Video, Instruksi, Tombol Pengumpulan) -->
+          <div class="udemy-left" id="tugas-content-panel">
+             <div style="text-align:center; padding: 60px 20px; background:white; border-radius:16px; border:1px dashed #cbd5e1; color:#64748b;">
+                Pilih tugas di daftar sebelah kanan untuk mulai belajar.
+             </div>
+          </div>
+          
+          <!-- KANAN: Sidebar Daftar Tugas -->
+          <div class="udemy-right">
+             <div class="udemy-right-header" id="tugas-right-header">Daftar Tugas (0)</div>
+             <div id="tugas-list-sidebar" class="udemy-list-container custom-scrollbar"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HALAMAN: PORTOFOLIO KARYA -->
+      <div id="page-portofolio" class="page" style="padding-top:16px;">
+        <div class="page-intro">🎨 Portofolio Karyaku</div>
+        <div class="page-sub">Galeri karya dan project yang telah diselesaikan.</div>
+        
+        <!-- Kotak Pencarian -->
+        <div style="margin: 0 14px 12px;">
+          <input type="text" id="search-karya" class="login-input" style="width:100%; padding:12px 14px; border-radius:10px; border:1px solid #e5e7eb; font-size:13px; margin:0;" placeholder="🔍 Cari judul atau kategori..." oninput="filterKarya()">
+        </div>
+
+        <div id="karya-list" class="karya-grid" style="margin-top:8px;"></div>
+        
+        <!-- Wadah Pagination -->
+        <div id="karya-pagination" style="padding: 0 14px 24px; display:flex; justify-content:center; align-items:center;"></div>
+      </div>
+
+      <!-- HALAMAN 2: PROFIL & PENGATURAN -->
+      <div id="page-profil" class="page" style="padding-top:16px;">
+        <div class="page-intro">👤 Profil & Pengaturan Akun</div>
+        <div class="page-sub">Informasi data diri dan keamanan akunmu.</div>
+        
+        <!-- Kartu Identitas Siswa -->
+        <div style="margin: 16px 14px 24px; background:white; padding:20px; border-radius:16px; border:1px solid #e2e8f0; display:flex; align-items:center; gap:16px;">
+           <div style="width:64px; height:64px; background:linear-gradient(135deg, #dbeafe, #bfdbfe); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:28px; flex-shrink:0;">👨‍🎓</div>
+           <div>
+              <div id="profil-nama-lengkap" style="font-size:18px; font-weight:800; color:#0f172a; margin-bottom:4px; line-height:1.2;">Memuat...</div>
+              <div style="display:flex; gap:8px; align-items:center;">
+                 <span id="profil-nis-lengkap" style="font-size:12px; font-weight:700; color:#2563eb; background:#eff6ff; padding:4px 10px; border-radius:6px; border:1px solid #bfdbfe;">NIS: -</span>
+                 <span id="profil-kelas-lengkap" style="font-size:12px; font-weight:600; color:#475569; background:#f1f5f9; padding:4px 10px; border-radius:6px; border:1px solid #e2e8f0;">Kelas: -</span>
+              </div>
+           </div>
+        </div>
+        
+        <!-- Form Ganti Password -->
+        <div style="margin: 8px 14px 24px;">
+           <div style="background:white; padding:20px; border-radius:16px; border:1px solid #e2e8f0; display:flex; flex-direction:column; gap:12px;">
+              <div style="font-size:14px; font-weight:800; color:#1e293b; margin-bottom:4px;">🔑 Ubah Password</div>
+              <input type="password" id="inp-old-pass" class="login-input" placeholder="Masukkan Password Lama" style="margin-bottom:0;">
+              <input type="password" id="inp-new-pass" class="login-input" placeholder="Masukkan Password Baru" style="margin-bottom:8px;">
+              <button onclick="ubahPassword()" class="btn-action-lg btn-submit" style="width:100%; border-radius:10px;">💾 Simpan Password Baru</button>
+           </div>
+        </div>
+        
+        <div id="s-poin" style="display:none;"></div>
+      </div>
+
+    </main>
+
+    <nav class="bottom-nav" style="grid-template-columns: repeat(6, 1fr);">
+      <button class="bn-btn active" data-page="beranda" onclick="switchPage('beranda')">
+        <div class="bn-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+        <span class="bn-lbl">Beranda</span>
+      </button>
+      <button class="bn-btn" data-page="jadwal" onclick="switchPage('jadwal')">
+        <div class="bn-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <span class="bn-lbl">Jadwal</span>
+      </button>
+      <button class="bn-btn" data-page="materi" onclick="switchPage('materi')">
+        <div class="bn-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+        <span class="bn-lbl">Materi</span>
+      </button>
+      <button class="bn-btn" data-page="tugas" onclick="switchPage('tugas')">
+        <div class="bn-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        <span class="bn-lbl">Tugas</span>
+      </button>
+      <button class="bn-btn" data-page="portofolio" onclick="switchPage('portofolio')">
+        <div class="bn-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg></div>
+        <span class="bn-lbl">Karya</span>
+      </button>
+      <button class="bn-btn" data-page="profil" onclick="switchPage('profil')">
+        <div class="bn-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+        <span class="bn-lbl">Profil</span>
+      </button>
+    </nav>
+  </div>
+</div>
+
+<div id="modal-wrap" class="modal-overlay hidden" onclick="closeModalWrap(event)">
+  <div class="modal-sheet" id="modal-box" style="animation: slideUpModal 0.3s ease;">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <h3 id="modal-title" class="modal-title">Detail</h3>
+      <button class="modal-close" onclick="closeModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="modal-body">
+      </div>
+  </div>
+</div>
+
+<style>
+@keyframes slideUpModal { from { transform: translateY(100%); } to { transform: translateY(0); } }
+</style>
+
+<div id="loading-overlay" class="modal-overlay hidden" style="align-items:center; z-index:999;"><div style="width:40px;height:40px;border:4px solid #e5e7eb;border-top-color:#1040a0;border-radius:50%;animation:spin 1s linear infinite;"></div></div>
+<div id="toast" class="hidden" style="position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#111827;color:white;padding:12px 24px;border-radius:99px;font-size:12px;font-weight:700;z-index:1000;box-shadow:0 10px 25px rgba(0,0,0,0.2);"></div>
+<style>@keyframes spin { 100% { transform: rotate(360deg); } }</style>
+
+<script src="script.js?v=20260707_paginasi"></script>
+</body>
+</html>

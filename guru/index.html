@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1e1b4b">
+<title>Dashboard Guru · ICT Al Firdaus</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ══ LOGIN SCREEN ══ -->
+<div id="login-screen">
+  <div class="login-wrap">
+    <div class="login-logo">
+      <div class="login-icon">
+        <svg width="36" height="36" viewBox="0 0 48 48" fill="none">
+          <rect x="5" y="9" width="38" height="24" rx="3.5" stroke="white" stroke-width="2.2" fill="none"/>
+          <path d="M16 18l-4 4 4 4M32 18l4 4-4 4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M21 26l6-8" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <div class="login-title">Dashboard Guru</div>
+        <div class="login-sub">ICT · SMPIT Al Firdaus Purwodadi</div>
+      </div>
+    </div>
+    <div class="login-card">
+      <p class="form-label">ID Guru</p>
+      <input id="inp-id" class="form-input" type="text" placeholder="Contoh: G001" autocomplete="username">
+      <p class="form-label" style="margin-top:12px;">Password</p>
+      <input id="inp-pw" class="form-input" type="password" placeholder="Password" autocomplete="current-password">
+      <button id="btn-login" class="btn-primary" style="margin-top:16px;width:100%;" onclick="doLogin()">Masuk</button>
+      <p id="login-err" class="err-msg hidden"></p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DASHBOARD SCREEN ══ -->
+<div id="dashboard-screen" class="hidden">
+
+  <!-- Top bar -->
+  <!-- Top bar -->
+  <header class="topbar">
+    <div class="tb-left">
+      <!-- ════ TOMBOL HAMBURGER MOBILE ════ -->
+      <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+      
+      <div class="tb-logo-icon">
+        <svg width="18" height="18" viewBox="0 0 48 48" fill="none">
+          <rect x="5" y="9" width="38" height="24" rx="3.5" stroke="white" stroke-width="2.2" fill="none"/>
+          <path d="M16 18l-4 4 4 4M32 18l4 4-4 4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M21 26l6-8" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <div class="tb-title">ICT Al Firdaus</div>
+        <div class="tb-sub">Dashboard Guru</div>
+      </div>
+    </div>
+    <div class="tb-right">
+      <button class="btn-secondary btn-sm" style="display: flex; align-items: center; gap: 6px;" onclick="refreshDashboardData()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <polyline points="23 4 23 10 17 10"></polyline>
+          <polyline points="1 20 1 14 7 14"></polyline>
+          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+        </svg>
+        Refresh
+      </button>
+      <div class="tb-guru-info">
+        <span id="tb-nama" class="tb-nama">–</span>
+        <span id="tb-kelas" class="tb-kelas-badge">–</span>
+      </div>
+      <button class="btn-logout" onclick="doLogout()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        <span>Keluar</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Layout: sidebar + content -->
+  <div class="dashboard-body">
+    <div id="sidebar-overlay" class="sidebar-overlay" onclick="toggleMobileMenu()"></div>
+    <!-- Sidebar nav -->
+    <aside class="g-sidebar">
+      <div style="margin: 0px 12px 4px; font-size: 11px; font-weight: 800; color: #9ca3af; letter-spacing: 0.5px; text-transform: uppercase;">
+        LMS & Akademik
+      </div>
+        <button class="g-nav-item active" data-page="beranda" onclick="switchPage('beranda')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span>Beranda</span>
+        </button>
+      <button class="g-nav-item" data-page="rekap"     onclick="switchPage('rekap')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        <span>Rekap Kelas</span>
+      </button>
+      <button class="g-nav-item" data-page="siswa"    onclick="switchPage('siswa')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span>Manajemen Siswa</span>
+      </button>
+      <button class="g-nav-item" data-page="progres"  onclick="switchPage('progres')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        <span>Progres Materi</span>
+      </button>
+      <button class="g-nav-item" data-page="mingguan" onclick="switchPage('mingguan')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <span>Tugas Mingguan</span>
+      </button>
+      <button class="g-nav-item" data-page="skl"      onclick="switchPage('skl')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <span>SKL Siswa</span>
+      </button>
+      <button class="g-nav-item" data-page="karya"    onclick="switchPage('karya')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <span>Kelola Karya</span>
+      </button>
+      <button class="g-nav-item" data-page="jadwal"   onclick="switchPage('jadwal')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <span>Jadwal Pelajaran</span>
+      </button>
+      <button class="g-nav-item" data-page="kurikulum" onclick="switchPage('kurikulum')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <span>Materi & Penugasan</span>
+      </button>
+      <div style="margin: 20px 12px 4px; font-size: 11px; font-weight: 800; color: #9ca3af; letter-spacing: 0.5px; text-transform: uppercase;">
+        Web Publik (Landing Page)
+      </div>
+      <button class="g-nav-item" data-page="pengaturan" onclick="switchPage('pengaturan')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        <span>Pengaturan Web</span>
+      </button>
+      <button class="g-nav-item" data-page="highlight" onclick="switchPage('highlight')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+        <span>Highlight Web</span>
+      </button>
+      <button class="g-nav-item" data-page="prestasi" onclick="switchPage('prestasi')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
+        <span>Prestasi Siswa</span>
+      </button>
+      <button class="g-nav-item" data-page="tim" onclick="switchPage('tim')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        <span>Tim Pengajar</span>
+      </button>
+    </aside>
+
+    <!-- Main content -->
+    <main class="g-content">
+
+      <!-- Loading overlay -->
+      <div id="loading-overlay" class="loading-overlay hidden">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Memuat data...</div>
+      </div>
+
+      <div id="page-beranda" class="g-page active">
+        <div class="page-header-row">
+            <div>
+            <h2 class="page-title">🏠 Beranda Dasbor</h2>
+            <p class="page-desc">Ringkasan aktivitas dan progres pembelajaran</p>
+            </div>
+        </div>
+
+        <div class="card" style="margin-bottom:16px;">
+            <div class="card-subhead">📈 Persentase Progres per Kelas</div>
+            <div id="b-progres-kelas" class="beranda-progres-grid"></div>
+        </div>
+
+        <div class="twin-panel" style="margin-bottom:16px;">
+            <div class="card">
+            <div class="card-subhead" style="color:#b91c1c;">⚠️ Tunggakan Lebih dari 3 Tugas</div>
+            <table class="data-table">
+                <thead><tr><th>Siswa</th><th>Kelas</th><th style="text-align:center;">Tunggakan</th></tr></thead>
+                <tbody id="b-tunggakan-tbody"></tbody>
+            </table>
+            </div>
+
+            <div class="card">
+            <div class="card-subhead" style="justify-content:space-between;">
+                <span>🏆 Peringkat Poin Mingguan</span>
+                <select id="b-filter-ranking" class="form-select" style="padding:4px 8px;font-size:11px;min-width:100px;" onchange="renderRankingBeranda()">
+                <option value="">Paralel (Semua)</option>
+                </select>
+            </div>
+            <table class="data-table">
+                <thead><tr><th style="width:40px;">Rank</th><th>Siswa</th><th style="text-align:center;">Poin</th></tr></thead>
+                <tbody id="b-ranking-tbody"></tbody>
+            </table>
+            </div>
+        </div>
+
+        <div class="twin-panel">
+            <div class="card">
+            <div class="card-subhead">🆕 Materi & Tugas Terbaru</div>
+            <div id="b-terbaru-list" class="beranda-list"></div>
+            </div>
+
+            <div class="card">
+            <div class="card-subhead" style="color:#a16207;">⏳ Belum Tuntas 100% (Semua Siswa)</div>
+            <div id="b-belum-tuntas-list" class="beranda-list"></div>
+            </div>
+        </div>
+        </div>
+      <!-- ── PAGE: REKAP ── -->
+      <div id="page-rekap" class="g-page active">
+        <div class="page-header-row">
+          <div>
+            <h2 class="page-title">📊 Rekap Kelas</h2>
+            <p class="page-desc">Ringkasan progres seluruh siswa</p>
+          </div>
+          <div class="header-actions">
+            <select id="rekap-filter-kelas" class="form-select" onchange="renderRekap()">
+              <option value="">Semua Kelas</option>
+            </select>
+          </div>
+        </div>
+        <div id="rekap-stats" class="stats-row"></div>
+        <div class="card" style="margin-top:16px;">
+          <table class="data-table" id="rekap-table">
+            <thead><tr>
+              <th>Siswa</th><th>Kelas</th>
+              <th>Selesai</th><th>Proses</th><th>Belum</th>
+              <th>Progress</th><th>Tugas ✓</th><th>Karya</th>
+            </tr></thead>
+            <tbody id="rekap-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="page-siswa" class="g-page">
+        <div class="page-header-row">
+          <div>
+            <h2 class="page-title">👥 Manajemen Siswa</h2>
+            <p class="page-desc">Data & akun siswa</p>
+          </div>
+          <button class="btn-primary" onclick="openSiswaForm()">+ Tambah Siswa</button>
+        </div>
+        <div class="card">
+          <div class="table-search-row">
+            <input type="text" id="siswa-search" class="form-input" placeholder="🔍 Cari nama atau kode..." oninput="filterSiswaBerubah()">
+            <select id="siswa-filter-kelas" class="form-select" onchange="filterSiswaBerubah()">
+              <option value="">Semua Kelas</option>
+            </select>
+          </div>
+          <table class="data-table" id="siswa-table">
+            <thead><tr><th>Kode</th><th>Nama</th><th>Kelas</th><th>Orang Tua</th><th>No HP</th><th>Aksi</th></tr></thead>
+            <tbody id="siswa-tbody"></tbody>
+          </table>
+          <div id="siswa-pagination"></div> 
+        </div>
+      </div>
+
+      <!-- ── PAGE: PROGRES ── -->
+      <div id="page-progres" class="g-page">
+        <div class="page-header-row">
+          <div>
+            <h2 class="page-title">📚 Progres Materi</h2>
+            <p class="page-desc">Input & update progres belajar siswa per materi</p>
+          </div>
+        </div>
+        <div class="filter-row">
+          <!-- ⬅️ PERUBAHAN: onchange diubah ke filterProgresBerubah() -->
+          <select id="pr-filter-kelas" class="form-select" onchange="filterProgresBerubah()">
+            <option value="">Semua Kelas</option>
+          </select>
+          <select id="pr-filter-siswa" class="form-select" onchange="filterProgresBerubah()">
+            <option value="">Semua Siswa</option>
+          </select>
+          <select id="pr-filter-bab" class="form-select" onchange="filterProgresBerubah()">
+            <option value="">Semua Bab</option>
+          </select>
+          <select id="pm-filter-materi" class="form-select" onchange="filterProgresBerubah()">
+            <option value="">Semua Materi</option>
+          </select>
+          <select id="pr-filter-status" class="form-select" onchange="filterProgresBerubah()">
+            <option value="">Semua Status</option>
+            <option>Selesai</option><option>Dalam Proses</option><option>Belum Mulai</option>
+          </select>
+        </div>
+        <div class="card">
+          <table class="data-table">
+            <thead><tr><th>Siswa</th><th>Materi</th><th>Bab</th><th>Status</th><th>Nilai</th><th>Deadline</th><th>Aksi</th></tr></thead>
+            <tbody id="progres-tbody"></tbody>
+          </table>
+          <!-- ⬅️ TAMBAHAN: Wadah untuk Pagination Progres -->
+          <div id="progres-pagination"></div>
+        </div>
+      </div>
+
+      <!-- ── PAGE: MINGGUAN ── -->
+      <div id="page-mingguan" class="g-page">
+        <div class="page-header-row">
+          <div>
+            <h2 class="page-title">📅 Tugas Mingguan</h2>
+            <p class="page-desc">Kelola daftar tugas & progres siswa</p>
+          </div>
+          <button class="btn-primary" onclick="openTugasForm()">+ Tambah Tugas</button>
+        </div>
+
+        <div class="twin-panel">
+          <!-- Tabel Kiri: Daftar Tugas -->
+          <div class="card">
+            <div class="card-subhead" style="justify-content: space-between; display: flex;">
+              <span>Daftar Tugas Mingguan</span>
+              <!-- ⬅️ TAMBAHAN: Kotak Pencarian Tugas -->
+              <input type="text" id="tugas-search" class="form-input" style="padding:4px 8px; font-size:12px; width:140px; font-weight:normal;" placeholder="🔍 Cari tugas..." oninput="filterTugasBerubah()">
+            </div>
+            <table class="data-table">
+              <thead><tr><th>ID</th><th>Judul</th><th>Minggu</th><th>Max Poin</th><th>Aksi</th></tr></thead>
+              <tbody id="tugas-tbody"></tbody>
+            </table>
+            <!-- ⬅️ TAMBAHAN: Wadah Pagination Tugas -->
+            <div id="tugas-pagination"></div>
+          </div>
+          
+          <!-- Tabel Kanan: Progres Siswa per Tugas -->
+          <div class="card">
+            <div class="card-subhead">Progres Siswa
+              <div class="filter-row" style="margin-bottom: 16px;">
+                <select id="mgg-filter-tugas" class="form-select" onchange="filterProgresMingguanBerubah()">
+                  <option value="">Pilih Tugas...</option>
+                </select>
+                
+                <select id="mgg-filter-kelas" class="form-select" onchange="filterProgresMingguanBerubah()">
+                  <option value="">Semua Kelas</option>
+                </select>
+
+                <!-- ⬅️ TAMBAHAN: Kotak Pencarian Siswa -->
+                <input type="text" id="mgg-search-siswa" class="form-input" style="flex:1; min-width: 140px; font-size:13px;" placeholder="🔍 Cari nama siswa..." oninput="filterProgresMingguanBerubah()">
+              </div>
+            </div>
+            <table class="data-table">
+              <thead><tr><th>Siswa</th><th>Kelas</th><th>Status</th><th>Poin</th><th>Aksi</th></tr></thead>
+              <tbody id="mgg-progres-tbody"></tbody>
+            </table>
+            <!-- ⬅️ TAMBAHAN: Wadah Pagination Progres Siswa -->
+            <div id="mgg-progres-pagination"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── PAGE: SKL ── -->
+      <div id="page-skl" class="g-page">
+        <div class="page-header-row">
+          <div>
+            <h2 class="page-title">📊 SKL Siswa</h2>
+            <p class="page-desc">Input Standar Kompetensi Lulusan per siswa</p>
+          </div>
+        </div>
+        <div class="filter-row">
+          <select id="skl-filter-kelas" class="form-select" onchange="sklFilterSiswa()">
+            <option value="">Semua Kelas</option>
+          </select>
+          <select id="skl-filter-siswa" class="form-select" onchange="renderSKLTable()">
+            <option value="">Pilih Siswa...</option>
+          </select>
+          <button class="btn-primary" onclick="openSKLFormKelas()">+ Tambah SKL</button>
+        </div>
+        <div id="skl-list" style="margin-top:12px;display:flex;flex-direction:column;gap:12px;"></div>
+      </div>
+
+      <!-- ── PAGE: KARYA ── -->
+      <div id="page-karya" class="g-page">
+        <div class="page-header-row">
+          <div>
+            <h2 class="page-title">🎨 Kelola Karya</h2>
+            <p class="page-desc">Input & manajemen karya siswa</p>
+          </div>
+          <button class="btn-primary" onclick="openKaryaForm()">+ Tambah Karya</button>
+        </div>
+        <div class="filter-row">
+          <!-- onchange diubah agar reset pagination -->
+          <select id="karya-filter-kelas" class="form-select" onchange="karyaFilterSiswa()">
+            <option value="">Semua Kelas</option>
+          </select>
+          <select id="karya-filter-siswa" class="form-select" onchange="filterKaryaBerubah()">
+            <option value="">Semua Siswa</option>
+          </select>
+          <!-- ⬅️ TAMBAHAN: Kotak Pencarian Judul Karya -->
+          <input type="text" id="karya-search" class="form-input" style="flex:1; min-width:200px;" placeholder="🔍 Cari judul karya..." oninput="filterKaryaBerubah()">
+        </div>
+        <div class="karya-grid-guru" id="karya-grid-guru"></div>
+        <!-- ⬅️ TAMBAHAN: Wadah Pagination Karya -->
+        <div id="karya-pagination" style="margin-top:20px;"></div>
+      </div>
+
+      <!-- ── PAGE: JADWAL ── -->
+      <div id="page-jadwal" class="g-page">
+        <div class="page-header-row">
+          <div>
+            <h2 class="page-title">🗓️ Jadwal Pelajaran</h2>
+            <p class="page-desc">Atur jadwal per kelas</p>
+          </div>
+          <div class="header-actions">
+            <select id="jadwal-filter-kelas" class="form-select" onchange="renderJadwalTable()">
+              <option value="">Pilih Kelas...</option>
+            </select>
+            <button class="btn-primary" onclick="openJadwalForm()">+ Tambah Jadwal</button>
+          </div>
+        </div>
+        <div id="jadwal-list-guru" style="margin-top:12px;"></div>
+      </div>
+
+      <!-- ── PAGE: KURIKULUM ── -->
+      <div id="page-kurikulum" class="g-page">
+        <div class="page-header-row">
+          <div>
+            <h2 class="page-title">📖 Kurikulum</h2>
+            <p class="page-desc">Kelola Bab & Materi pembelajaran</p>
+          </div>
+          <button class="btn-primary" onclick="openBabForm()">+ Tambah Bab</button>
+        </div>
+        
+        <!-- ⬅️ TAMBAHAN: Kotak Pencarian Bab -->
+        <div class="filter-row">
+          <input type="text" id="kurikulum-search" class="form-input" style="flex:1; min-width:200px;" placeholder="🔍 Cari judul bab..." oninput="filterKurikulumBerubah()">
+        </div>
+        
+        <div id="kurikulum-list" style="margin-top:12px;display:flex;flex-direction:column;gap:12px;"></div>
+        
+        <!-- ⬅️ TAMBAHAN: Wadah Pagination Kurikulum -->
+        <div id="kurikulum-pagination" style="margin-top:16px;"></div>
+      </div>
+
+
+      <!-- ── PAGE: PENGATURAN ── -->
+      <div id="page-pengaturan" class="g-page">
+        <div class="page-header-row">
+          <div>
+            <h2 class="page-title">⚙️ Pengaturan Website</h2>
+            <p class="page-desc">Konfigurasi variabel utama landing page</p>
+          </div>
+          <button class="btn-primary" onclick="openPengaturanForm()">+ Tambah Key</button>
+        </div>
+        <div class="card" style="margin-bottom: 20px; padding: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; background: #f8fafc; border: 2px solid var(--primary-light);">
+          <div>
+            <h3 style="font-size:15px; font-weight:800; color:var(--text-dark); margin-bottom:4px;">Mode Leaderboard (Web Publik)</h3>
+            <p style="font-size:12px; color:var(--text-muted);">Atur apakah peringkat Web Publik digabung (Global) atau dipisah (Tab ICT & Reguler).</p>
+          </div>
+          <select id="ctrl-leaderboard-mode" class="form-select" style="width:auto; font-weight:bold; color:var(--primary); border-color:var(--primary);" onchange="toggleLeaderboardMode()">
+            <option value="global">🌍 Gabung (Global)</option>
+            <option value="split">⚔️ Pisah (Tab ICT & Reguler)</option>
+          </select>
+        </div>
+        <div class="card">
+          <table class="data-table">
+            <thead><tr><th>Key (Variabel)</th><th>Value (Nilai)</th><th style="width:120px;">Aksi</th></tr></thead>
+            <tbody id="pengaturan-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+      <!-- ── PAGE: HIGHLIGHT WEB ── -->
+      <div id="page-highlight" class="g-page">
+        <div class="page-header-row">
+          <div>
+            <h2 class="page-title">⭐ Highlight Program Web</h2>
+            <p class="page-desc">Kelola kotak "Apa yang Kamu Pelajari" di halaman depan web publik</p>
+          </div>
+          <button class="btn-primary" onclick="openHighlightForm()">+ Tambah Program</button>
+        </div>
+        <div class="karya-grid-guru" id="highlight-grid"></div>
+      </div>
+      <!-- ── PAGE: PRESTASI ── -->
+      <div id="page-prestasi" class="g-page">
+        <div class="page-header-row">
+          <div>
+            <h2 class="page-title">🏆 Prestasi & Kompetisi</h2>
+            <p class="page-desc">Kelola deretan penghargaan siswa untuk Landing Page</p>
+          </div>
+          <button class="btn-primary" onclick="openPrestasiForm()">+ Tambah Prestasi</button>
+        </div>
+        <div class="karya-grid-guru" id="prestasi-grid"></div>
+      </div>
+      <div id="page-tim" class="g-page">
+        <div class="page-header-row">
+          <div>
+            <h2 class="page-title">👨‍🏫 Tim Pengajar</h2>
+            <p class="page-desc">Kelola profil instruktur dan mentor untuk Landing Page</p>
+          </div>
+          <button class="btn-primary" onclick="openTimForm()">+ Tambah Tim</button>
+        </div>
+        <div class="karya-grid-guru" id="tim-grid"></div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ══ MODALS ══ -->
+
+<!-- Modal Universal -->
+<div id="modal-wrap" class="modal-wrap hidden" onclick="closeModalWrap(event)">
+  <div class="modal-box" id="modal-box">
+    <div class="modal-hd">
+      <h3 id="modal-title" class="modal-title">Form</h3>
+      <button class="modal-close-btn" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body">
+      <!-- injected dynamically -->
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="toast hidden"></div>
+
+<script type="module" src="script.js"></script>
+</body>
+</html>
