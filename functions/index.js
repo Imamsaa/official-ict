@@ -100,8 +100,11 @@ async function writeRow(sheet, keyFields, record) {
   }
   const cleaned = stripSensitive(record);
   const docId = safeDocId(sheet, record, 0);
-  await sheetRowsRef(sheet).doc(docId).set({
-    record: cleaned,
+  const ref = sheetRowsRef(sheet).doc(docId);
+  const existing = await ref.get();
+  const previousRecord = existing.exists && existing.data().record ? existing.data().record : {};
+  await ref.set({
+    record: { ...previousRecord, ...cleaned },
     updatedAt: FieldValue.serverTimestamp()
   }, { merge: true });
   return { success: true };
