@@ -71,3 +71,33 @@ Aturan Firestore dalam repositori sengaja menolak akses langsung klien. Cloud Fu
 ## Batasan tahap saat ini
 
 Perubahan repositori menyiapkan server, aturan, dan tooling; belum mengekspor data produksi, belum melakukan deployment Firebase, dan belum mengganti semua URL Apps Script di portal live. Ketiganya harus diverifikasi untuk menyelesaikan migrasi secara penuh.
+
+## Status project dari pemilik (2 November 2026)
+
+- Project ID dikonfirmasi: `monitoring-ict-smpit`.
+- Pemilik melaporkan billing Blaze aktif.
+- Pemilik melaporkan akun memiliki akses Owner.
+- Keberadaan database Cloud Firestore belum diketahui; periksa melalui Firebase Console sebelum membuat database apa pun.
+- Firebase Web API Key dan project config sudah ada di `firebase/client.js`; tidak perlu meminta API key baru dari pemilik. Firebase Web API Key bukan kredensial admin.
+- Firebase Authentication Email/Password belum diverifikasi aktif.
+
+## Checklist persiapan project
+
+1. Buka [Firestore Console](https://console.firebase.google.com/project/monitoring-ict-smpit/firestore) dan cek apakah database `(default)` sudah ada. Bila ada, catat lokasi dan jangan membuat database kedua.
+2. Bila belum ada, buat Cloud Firestore Standard Edition dengan ID `(default)`, Production mode, dan lokasi `asia-southeast2` (Jakarta) bila tersedia. Lokasi database tidak dapat diganti sesudah provisioning. Jika lokasi default Google Cloud sudah ditetapkan, console dapat membatasi pilihan lokasi.
+3. Di [Authentication Console](https://console.firebase.google.com/project/monitoring-ict-smpit/authentication), aktifkan Email/Password untuk login siswa dan guru. Orang tua memakai custom token setelah validasi PIN.
+4. Pastikan Functions API, Cloud Build, Artifact Registry, dan layanan pendukung deployment dapat diaktifkan. Billing Blaze sudah dilaporkan aktif; buat budget alerts untuk memantau biaya.
+5. Deploy Functions dan Firestore Rules hanya setelah uji emulator/staging. Rules saat ini deny-by-default dan akan memutus akses dashboard guru lama yang membaca Firestore langsung.
+6. Ekspor data dari spreadsheet ICT sumber secara privat menggunakan `scripts/export-appscript-data.gs`. Jangan upload ekspor, password siswa/guru, PIN, atau service-account key ke GitHub maupun chat.
+7. Import ke Firestore melalui `scripts/import-firestore.js`, lalu verifikasi jumlah record, relasi, akun, dan login setiap peran.
+8. Migrasikan portal siswa, orang tua, guru, dan website publik sebelum mengubah `firebase/runtime-config.js` dari `legacy` ke `firebase`.
+
+## Fakta implementasi yang perlu diingat
+
+- `firebase/runtime-config.js` masih menggunakan `backend: "legacy"`; ini disengaja agar portal aktif tidak terputus.
+- Portal siswa sudah memiliki jalur login/data Firebase parsial.
+- Portal orang tua masih memakai JSONP Apps Script; halaman ini belum boleh dialihkan sebelum PIN invitation dan custom-token flow selesai diuji.
+- Website publik sudah punya cabang fetch JSON saat runtime Firebase, tetapi tetap perlu pengujian endpoint dan field mapping.
+- Dashboard guru masih berupa prototype Firestore langsung dan belum menggunakan autentikasi Firebase bersama/API Cloud Functions. Jangan deploy Firestore Rules deny-by-default ke project produksi sebelum dashboard guru dipindahkan ke API.
+- Cloud Functions perlu dijalankan di Node.js 22 sesuai konfigurasi repositori dan dukungan Firebase saat ini.
+
