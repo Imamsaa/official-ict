@@ -26,7 +26,10 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig, "official-ict-client");
 const auth = getAuth(app);
-const API_URL = "https://asia-southeast2-monitoring-ict-smpit.cloudfunctions.net/api";
+// runtime-config.js is loaded by the page before this module. This keeps
+// the endpoint overridable for local emulators or a separate dev backend.
+const runtimeConfig = typeof window !== "undefined" ? (window.ICT_RUNTIME_CONFIG || {}) : {};
+const API_URL = runtimeConfig.apiUrl || "https://asia-southeast2-monitoring-ict-smpit.cloudfunctions.net/api";
 
 function normalizeCode(value) {
   return String(value == null ? "" : value).trim().toUpperCase();

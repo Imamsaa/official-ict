@@ -105,3 +105,6 @@ Perubahan repositori menyiapkan server, aturan, dan tooling; belum mengekspor da
 - Dashboard guru masih berupa prototype Firestore langsung dan belum menggunakan autentikasi Firebase bersama/API Cloud Functions. Jangan deploy Firestore Rules deny-by-default ke project produksi sebelum dashboard guru dipindahkan ke API.
 - Cloud Functions perlu dijalankan di Node.js 22 sesuai konfigurasi repositori dan dukungan Firebase saat ini.
 
+
+
+- Frontend tidak bergantung pada Firebase Hosting. Development lokal dan hosting eksternal didukung melalui konfigurasi API URL, CORS localhost, dan Authorized Domains Firebase Authentication. Domain produksi akan ditambahkan setelah platform/domain hosting ditentukan.

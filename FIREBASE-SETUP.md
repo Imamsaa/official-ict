@@ -9,13 +9,13 @@ Functions runtime: Node.js 22
 
 - Billing Blaze aktif.
 - Akun memiliki hak Owner.
-- Keberadaan database Firestore belum diketahui.
+- Pemilik telah mengonfirmasi database Cloud Firestore `(default)` sudah ada. Jangan membuat database baru; lokasi database masih perlu dilihat pada daftar database.
 - Firebase Web API Key dan konfigurasi Web App telah tersedia pada `firebase/client.js`.
 - Status Email/Password Authentication belum diverifikasi.
 
 ## 1. Periksa Firestore sebelum membuat database
 
-Buka https://console.firebase.google.com/project/monitoring-ict-smpit/firestore lalu pilih Databases & Storage > Firestore > Data.
+Buka https://console.firebase.google.com/project/monitoring-ict-smpit/firestore lalu pilih Databases & Storage > Firestore > Data. Pada daftar database, baca kolom **Location** pada baris `(default)`. Dokumentasi resmi: https://firebase.google.com/docs/firestore/locations#view-location.
 
 - Jika database `(default)` sudah ada: catat Database ID dan lokasi. Jangan membuat database baru. Periksa apakah ada data yang sudah dipakai aplikasi/prototype.
 - Jika belum ada: buat Cloud Firestore Standard Edition, Database ID `(default)`, Production mode, lokasi `asia-southeast2` (Jakarta) jika tersedia.
@@ -118,3 +118,27 @@ Jalankan dari folder \`scripts\`. File ekspor, \`parent-invites.csv\`, \`account
 5. API yang belum aktif dari hasil preflight.
 
 Jangan deploy \`firestore.rules\` ke project produksi sampai dashboard guru lama yang membaca Firestore langsung telah dimigrasikan ke Cloud Functions API.
+
+
+## Development lokal dan hosting eksternal
+
+Frontend Official ICT tidak wajib di-host di Firebase Hosting. Frontend dapat di-deploy di layanan hosting statis lain; Firebase tetap menjadi backend untuk Authentication, Firestore, dan Cloud Functions. Hosting eksternal tidak mengubah Firebase project yang digunakan aplikasi.
+
+### Menjalankan frontend dari komputer developer
+
+1. Jalankan web melalui local development server (jangan membuka file HTML langsung dengan \`file://\`). Contoh origin: \`http://localhost:5173\`, \`http://localhost:5500\`, atau \`http://127.0.0.1:5500\`.
+2. Halaman harus memuat \`firebase/runtime-config.js\` sebelum \`firebase/client.js\`.
+3. \`firebase/client.js\` menggunakan project Web App config yang sama dan membaca \`window.ICT_RUNTIME_CONFIG.apiUrl\` sebagai endpoint API. Dengan demikian API dapat diarahkan ke Cloud Functions yang sudah di-deploy atau ke Functions Emulator.
+4. Cloud Functions API mengizinkan \`localhost\` dan \`127.0.0.1\` di port development mana pun. Origin produksi tetap harus dimasukkan secara spesifik ke variabel \`ALLOWED_ORIGINS\` pada environment Functions.
+
+### Firebase Authentication authorized domains
+
+Buka Authentication > Settings > Authorized domains. Tambahkan \`localhost\` untuk development lokal bila belum tercantum. Tambahkan domain produksi setelah nama domain hosting diputuskan. Firebase Auth memvalidasi domain ini untuk alur autentikasi; ini berbeda dengan aturan CORS Cloud Functions. Pada project baru setelah 28 April 2025, localhost mungkin tidak otomatis terdaftar.
+
+### Hosting eksternal
+
+Setelah hosting dipilih, masukkan origin tepatnya (misalnya \`https://ict.example.sch.id\`) ke \`ALLOWED_ORIGINS\` Functions dan tambahkan hostname yang sama pada Authorized domains Firebase Authentication. Jangan gunakan wildcard untuk mengizinkan semua origin.
+
+### Pilihan aman untuk development
+
+Jangan menguji fitur tulis/hapus dengan data asli siswa. Pilihan yang disarankan adalah Firebase Emulator Suite atau Firebase project development terpisah. Bila sementara memakai project produksi, batasi uji coba ke akun dan data uji yang memang disiapkan khusus. Jangan menaruh Service Account key di frontend atau repositori.

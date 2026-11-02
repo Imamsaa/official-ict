@@ -460,7 +460,10 @@ exports.api = onRequest({ region: REGION, maxInstances: 10 }, async (req, res) =
     "http://127.0.0.1:5000"
   ];
   const allowedOrigins = (process.env.ALLOWED_ORIGINS || defaultOrigins.join(",")).split(",").map((v) => v.trim()).filter(Boolean);
-  if (allowedOrigins.includes(origin)) {
+  // Local development origins are allowed on any port (Vite, Live Server, etc.).
+  // Production domains must be listed explicitly in ALLOWED_ORIGINS.
+  const isLocalDevelopmentOrigin = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+  if (allowedOrigins.includes(origin) || isLocalDevelopmentOrigin) {
     res.set("Access-Control-Allow-Origin", origin);
     res.set("Vary", "Origin");
   }
