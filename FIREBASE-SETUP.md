@@ -240,9 +240,101 @@ Ketentuan:
 2. Tidak membuat database pengganti dan tidak menghapus koleksi yang sudah ada.
 3. Tidak menjalankan \`firebase deploy --only firestore:rules\` atau deploy rules gabungan tanpa audit aturan seluruh aplikasi yang memakai project ini.
 4. File \`firestore.rules\` di repositori ini adalah rancangan awal yang memiliki aturan \`deny all\` menyeluruh. Deploy file itu apa adanya dapat memblokir aplikasi lain walaupun data mereka tidak dihapus.
-5. Sebelum impor, audit nama/path koleksi dan jumlah dokumen yang sudah ada. Importer menulis ke \`legacyData/{sheet}/rows/{docId}\` dan \`parentAccess/{studentCode}\`; operasi \`set()\` dapat mengganti dokumen dengan ID yang sama. Nama path ini harus dipastikan tidak dipakai aplikasi lain.
+5. Sebelum impor, jalankan audit read-only. Importer terbaru hanya menulis ke namespace \`officialIct_v1\`; koleksi generik milik aplikasi lain dibiarkan tidak tersentuh.
 6. Jika ada benturan atau kepemilikan koleksi tidak jelas, hentikan impor dan rancang namespace terisolasi untuk Official ICT terlebih dahulu.
 7. Buat dan verifikasi backup sebelum operasi tulis. Jangan pernah menghapus data aplikasi lain untuk menyelesaikan benturan.
 8. Bila hanya memperbarui Cloud Functions, gunakan target deploy fungsi secara spesifik setelah audit, bukan deploy seluruh Firebase project.
 
 Baca \`FIRESTORE-SHARED-DATABASE-POLICY.md\` sebelum migrasi, impor, atau deployment.
+
+
+## Prosedur migrasi aman ke namespace terisolasi
+
+Data Official ICT disimpan pada namespace khusus agar tidak memakai koleksi generik aplikasi lain:
+
+- Data sheet: \`officialIct_v1/data/{sheet}/{docId}\`
+- PIN orang tua: \`officialIct_v1/access/parentAccess/{studentCode}\`
+- Marker kepemilikan: \`officialIct_v1/_meta\`
+
+Importer juga mensyaratkan flag \`--confirm-namespace=officialIct_v1\`, menolak namespace yang berisi dokumen tanpa marker Official ICT, dan memeriksa benturan akun Firebase Authentication sebelum menulis data.
+
+### A. Siapkan komputer admin
+
+Gunakan Node.js 22 LTS, Google Cloud CLI, dan Firebase CLI. Dari PowerShell di root repositori:
+
+\`\`\`powershell
+git pull origin main
+gcloud auth login
+gcloud config set project monitoring-ict-smpit
+gcloud auth application-default login
+firebase login
+firebase use monitoring-ict-smpit
+\`\`\`
+
+Gunakan akun Google yang mempunyai izin Owner pada project. Jangan membuat atau mengunggah service-account private key. Application Default Credentials digunakan oleh script Admin SDK lokal; login Firebase CLI saja tidak mencukupi.
+
+### B. Instal dependensi alat migrasi
+
+\`\`\`powershell
+cd scripts
+npm install
+\`\`\`
+
+### C. Audit Firestore (read-only)
+
+Jalankan dari folder \`scripts\`:
+
+\`\`\`powershell
+node audit-shared-firestore.js
+\`\`\`
+
+Script ini menampilkan nama top-level collection dan jumlah dokumen, status namespace tujuan, serta jumlah dokumen pada path generik yang dibiarkan tidak disentuh. Script tidak membaca/menampilkan isi record, nama siswa, password, atau PIN. Pembacaan jumlah dokumen tetap dapat menimbulkan biaya baca kecil.
+
+**Hentikan proses** jika hasil \`Namespace state\` adalah \`STOP_...\`, jika namespace sudah dipakai aplikasi lain, atau jika pemilik aplikasi lain belum menyetujui isolasi path tujuan. Kirim hanya output audit ini untuk diperiksa; jangan kirim file ekspor.
+
+### D. Backup database bersama
+
+Sebelum impor pertama, buat backup seluruh database \`(default)\` ke bucket Cloud Storage dengan akses terbatas. Dari Google Cloud Console: Firestore > pilih database \`(default)\` > Import/Export > Export > Export entire database > pilih bucket privat > Export.
+
+Alternatif via CLI, setelah bucket tersedia:
+
+\`\`\`powershell
+gcloud firestore export gs://NAMA_BUCKET_PRIVAT/backup-sebelum-official-ict --database="(default)"
+\`\`\`
+
+Pastikan export berhasil tercatat di halaman Import/Export. Ekspor Firestore membaca dokumen dan dapat menimbulkan biaya; bucket harus tersedia serta punya izin service agent Firestore.
+
+### E. Ekspor Google Sheets lama
+
+1. Buka spreadsheet ICT yang saat ini menjadi sumber data.
+2. Pilih Extensions > Apps Script.
+3. Salin isi file \`scripts/export-appscript-data.gs\` dari repository ke project Apps Script yang terikat dengan spreadsheet tersebut.
+4. Jalankan fungsi \`exportIctSheetsToDriveJson\`.
+5. Ambil URL file dari Execution log dan unduh JSON ke folder privat, contoh \`C:\\ICT-Private\\official-ict-export.json\`.
+6. Jangan unggah file ini ke GitHub atau kirim melalui chat karena berisi data pribadi dan password lama.
+
+### F. Jalankan impor (hanya sesudah audit dan backup)
+
+Dari folder \`scripts\`:
+
+\`\`\`powershell
+node import-firestore.js --confirm-namespace=officialIct_v1 C:\\ICT-Private\\official-ict-export.json
+\`\`\`
+
+Importer menulis hanya ke namespace \`officialIct_v1\`, membuat akun Auth siswa/guru yang belum ada, dan membuat PIN orang tua yang di-hash. Bila ada akun alias/UID yang sudah dipakai identitas berbeda, importer berhenti tanpa mengubah akun yang bentrok.
+
+Simpan file \`parent-invites.csv\`, \`account-reset.csv\`, dan \`migration-report.json\` secara privat. Jangan commit file-file tersebut.
+
+### G. Verifikasi data
+
+\`\`\`powershell
+node verify-firestore-import.js C:\\ICT-Private\\official-ict-export.json
+\`\`\`
+
+Lanjutkan hanya bila hasilnya \`RESULT: PASS\`. Pastikan jumlah record per sheet cocok, tidak ada password/PIN di dokumen Firestore, akun Auth cocok, dan login uji untuk siswa/guru/orang tua berhasil.
+
+### H. Migrasikan portal bertahap
+
+Migrasi data saja belum memindahkan semua halaman ke Firebase. Integrasikan dan uji website publik, portal siswa, portal orang tua, dan dashboard guru satu per satu. Jangan ubah \`backend: "legacy"\` menjadi \`firebase\` sampai seluruh portal menggunakan API Cloud Functions dan lulus regression test.
+
+Jangan deploy \`firestore.rules\` atau menjalankan \`firebase deploy\` menyeluruh pada project bersama. Jika backend Functions perlu di-deploy, gunakan target fungsi secara spesifik setelah pemeriksaan kode dan izin selesai.
