@@ -1,0 +1,13 @@
+{
+  "name": "official-ict-migration-tools",
+  "private": true,
+  "description": "Local-only migration and verification tools for Official ICT",
+  "scripts": {
+    "preflight": "node firebase-project-preflight.js",
+    "import": "node import-firestore.js",
+    "verify": "node verify-firestore-import.js"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.4.0"
+  }
+}

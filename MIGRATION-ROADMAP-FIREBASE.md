@@ -28,6 +28,10 @@ Project ID default mengikuti konfigurasi Firebase yang sudah ada di kode dashboa
 
 ## Status tahapan
 
+- Pemilik telah mengonfirmasi bahwa database Firestore `(default)` sudah ada. Database tidak boleh dibuat ulang; lokasi dan konfigurasi aktual masih harus dibaca dari Console atau `scripts/firebase-project-preflight.js`.
+- Billing Blaze dan akses Owner telah dikonfirmasi oleh pemilik; preflight Google Cloud tetap digunakan untuk memverifikasi akun aktif dan API.
+- Authentication Email/Password belum diverifikasi.
+
 - [x] Tahap 0 — Audit statis awal repositori dan pencatatan risiko prioritas.
 - [x] Tahap 1 — Tambahkan fondasi backend Firebase, aturan Firestore deny-by-default, konfigurasi CLI, dan alat ekspor/impor.
 - [ ] Tahap 2 — Jalankan ekspor privat dari spreadsheet produksi dan validasi jumlah baris/kolom.

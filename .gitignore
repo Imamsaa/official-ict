@@ -22,3 +22,7 @@ migration-report*.json
 
 # Private school database export; keep it out of version control
 /DATABASE ICT SMPIT AL FIRDAUS.xlsx
+
+# Local migration tool dependencies
+scripts/node_modules/
+scripts/package-lock.json

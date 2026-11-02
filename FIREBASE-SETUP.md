@@ -63,3 +63,58 @@ Jangan mengubah `firebase/runtime-config.js` menjadi `firebase` dulu. Portal sis
 - Password Authentication: https://firebase.google.com/docs/auth/web/password-auth
 - Cloud Functions: https://firebase.google.com/docs/functions/get-started
 - API keys: https://firebase.google.com/docs/projects/api-keys
+
+
+## Firestore sudah ada: langkah berikutnya
+
+Pemilik project mengonfirmasi bahwa database Cloud Firestore \`(default)\` sudah ada. Jangan membuat database kedua. ID, lokasi, edition/mode, dan aturan yang sedang berlaku tetap harus diperiksa sebelum import atau deployment. Lokasi database tidak dapat diubah setelah provisioning.
+
+### Pemeriksaan read-only satu perintah
+
+Setelah Google Cloud CLI (gcloud) terpasang dan login sebagai akun Owner:
+
+\`\`\`powershell
+node scripts/firebase-project-preflight.js
+\`\`\`
+
+Pemeriksaan ini hanya membaca status project:
+- akun Google Cloud yang sedang login;
+- project aktif dan kecocokannya dengan \`monitoring-ict-smpit\`;
+- status billing;
+- database Firestore \`(default)\`, termasuk location dan edition/type bila dilaporkan;
+- API Google Cloud yang sudah aktif;
+- versi Firebase CLI dan Node.js lokal.
+
+Script ini tidak membuat database, mengaktifkan API, mengubah billing, mengubah Security Rules, atau men-deploy Cloud Functions. Bila gcloud belum tersedia, ikuti link Firebase/Google Cloud Console di atas dan jangan mengirim kredensial privat.
+
+### Pemeriksaan manual Authentication
+
+Buka https://console.firebase.google.com/project/monitoring-ict-smpit/authentication lalu periksa Sign-in method. Provider Email/Password harus aktif untuk akun siswa dan guru. Jangan membuat akun massal secara manual; importer akan mengurus akun setelah skema dan sumber data diverifikasi.
+
+### Instal dependensi importer dan verifier
+
+\`\`\`powershell
+cd scripts
+npm install
+npm run preflight
+\`\`\`
+
+Perintah preflight bisa dijalankan dari root dengan \`node scripts/firebase-project-preflight.js\`; tidak membutuhkan npm package. Dependensi \`firebase-admin\` pada folder scripts dibutuhkan untuk import/verifikasi saja.
+
+Setelah ekspor privat tersedia:
+\`\`\`powershell
+npm run import -- C:\\path\\private\\legacy-export.json
+npm run verify -- C:\\path\\private\\legacy-export.json
+\`\`\`
+
+Jalankan dari folder \`scripts\`. File ekspor, \`parent-invites.csv\`, \`account-reset.csv\`, dan \`migration-report.json\` harus tetap privat dan tidak boleh di-commit.
+
+### Hasil yang perlu dicatat sebelum deployment
+
+1. Database ID (harus tetap \`(default)\` untuk konfigurasi sekarang).
+2. Database location (misalnya \`asia-southeast2\`, atau lokasi aktual yang ditampilkan).
+3. Database edition/type dan apakah collections sudah digunakan aplikasi lain.
+4. Apakah Authentication Email/Password aktif.
+5. API yang belum aktif dari hasil preflight.
+
+Jangan deploy \`firestore.rules\` ke project produksi sampai dashboard guru lama yang membaca Firestore langsung telah dimigrasikan ke Cloud Functions API.

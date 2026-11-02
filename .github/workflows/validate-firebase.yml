@@ -20,6 +20,8 @@ jobs:
         run: |
           node --check functions/index.js
           node --check scripts/import-firestore.js
+          node --check scripts/firebase-project-preflight.js
+          node --check scripts/verify-firestore-import.js
       - name: Validate JSON configuration
         run: |
-          node -e "for (const f of ['firebase.json','.firebaserc','firestore.indexes.json','functions/package.json']) { JSON.parse(require('node:fs').readFileSync(f,'utf8')); console.log('OK',f); }"
+          node -e "for (const f of ['firebase.json','.firebaserc','firestore.indexes.json','functions/package.json','scripts/package.json']) { JSON.parse(require('node:fs').readFileSync(f,'utf8')); console.log('OK',f); }"
