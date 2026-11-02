@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /**
  * SHARED DATABASE SAFETY:
  * Firestore (default) is shared with other applications. Never delete or reset
@@ -7,7 +8,6 @@
  * in both paths and verify a backup BEFORE running this importer.
  * Do not run while either path is used by another application.
  */
-#!/usr/bin/env node
 "use strict";
 
 /**
