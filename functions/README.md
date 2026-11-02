@@ -1,6 +1,6 @@
 # Official ICT Firebase API
 
-Cloud Functions menggunakan Firebase Admin SDK dan Firestore. Endpoint awal berada pada fungsi api di region asia-southeast2.
+Cloud Functions menggunakan Firebase Admin SDK dan Firestore. Endpoint API berada pada fungsi `api` di region `us-central1`, yaitu region Functions terdekat yang direkomendasikan untuk Firestore multi-region `nam5`.
 
 ## Endpoint
 

@@ -15,7 +15,7 @@ const path = require("node:path");
 
 const ROOT = path.resolve(__dirname, "..");
 const EXPECTED_PROJECT = "monitoring-ict-smpit";
-const EXPECTED_FUNCTION_REGION = "asia-southeast2";
+const EXPECTED_FUNCTION_REGION = "us-central1";
 const REQUIRED_SERVICES = [
   "cloudfunctions.googleapis.com",
   "cloudbuild.googleapis.com",
@@ -132,11 +132,20 @@ if (database) {
   console.log("  Type:", type);
   console.log("  Edition:", edition);
   console.log("  Delete protection:", database.deleteProtectionState || "not reported");
-  if (location === EXPECTED_FUNCTION_REGION) {
-    status("Function / database region alignment", true, EXPECTED_FUNCTION_REGION);
+  const recommendedFunctionRegions = {
+    nam5: "us-central1",
+    "us-central": "us-central1",
+    eur3: "europe-west1",
+    "europe-west": "europe-west1"
+  };
+  const recommendedRegion = recommendedFunctionRegions[location] || location;
+  if (recommendedRegion === EXPECTED_FUNCTION_REGION) {
+    status("Function / database region alignment", true,
+      "Firestore " + location + " -> Functions " + EXPECTED_FUNCTION_REGION);
   } else {
     status("Function / database region alignment", false,
-      "Functions currently target " + EXPECTED_FUNCTION_REGION + "; review the closest supported region for database location " + location + " before deploying");
+      "Firestore " + location + " recommends Functions " + recommendedRegion +
+      "; configured target is " + EXPECTED_FUNCTION_REGION);
   }
 }
 

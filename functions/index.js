@@ -10,7 +10,7 @@ if (!getApps().length) initializeApp();
 
 const db = getFirestore();
 const auth = getAuth();
-const REGION = "asia-southeast2";
+const REGION = "us-central1";
 const SHEETS = [
   "siswa", "guru", "bab", "materi", "progres_materi",
   "tugas_mingguan", "progres_tugas_mingguan", "karya", "link_karya",

@@ -2,7 +2,8 @@
 
 Project: `monitoring-ict-smpit`  
 Backend target: Firebase Authentication + Cloud Firestore + Cloud Functions  
-Function region: `asia-southeast2` (Jakarta)  
+Firestore `(default)`: `nam5` (multi-region Amerika Serikat bagian tengah)  
+Cloud Functions region: `us-central1` (Iowa), mengikuti rekomendasi Firebase untuk Firestore `nam5`  
 Functions runtime: Node.js 22
 
 ## Status yang dilaporkan pemilik
@@ -17,9 +18,9 @@ Functions runtime: Node.js 22
 
 Buka https://console.firebase.google.com/project/monitoring-ict-smpit/firestore lalu pilih Databases & Storage > Firestore > Data. Pada daftar database, baca kolom **Location** pada baris `(default)`. Dokumentasi resmi: https://firebase.google.com/docs/firestore/locations#view-location.
 
-- Jika database `(default)` sudah ada: catat Database ID dan lokasi. Jangan membuat database baru. Periksa apakah ada data yang sudah dipakai aplikasi/prototype.
-- Jika belum ada: buat Cloud Firestore Standard Edition, Database ID `(default)`, Production mode, lokasi `asia-southeast2` (Jakarta) jika tersedia.
-- Database location tidak dapat diganti setelah dibuat. Jika console menawarkan lokasi yang berbeda karena default Google Cloud resource sudah dikunci, berhenti dan catat lokasi aktual sebelum deployment.
+- Database `(default)` telah dikonfirmasi oleh pemilik dengan lokasi `nam5`. Jangan membuat ulang atau menghapus database tersebut.
+- `nam5` adalah lokasi multi-region Amerika Serikat bagian tengah. Untuk Cloud Functions, Firebase merekomendasikan `us-central1` sebagai region terdekat.
+- Lokasi database tidak dapat diubah. Pertahankan database `(default)` dan selaraskan Functions di `us-central1`.
 
 Jangan gunakan Test mode untuk data siswa. Rules di repositori bersifat deny-by-default dan API server menggunakan Firebase Admin SDK.
 
@@ -112,7 +113,7 @@ Jalankan dari folder \`scripts\`. File ekspor, \`parent-invites.csv\`, \`account
 ### Hasil yang perlu dicatat sebelum deployment
 
 1. Database ID (harus tetap \`(default)\` untuk konfigurasi sekarang).
-2. Database location (misalnya \`asia-southeast2\`, atau lokasi aktual yang ditampilkan).
+2. Database location: \`nam5\` (multi-region Amerika Serikat bagian tengah).
 3. Database edition/type dan apakah collections sudah digunakan aplikasi lain.
 4. Apakah Authentication Email/Password aktif.
 5. API yang belum aktif dari hasil preflight.
@@ -219,3 +220,12 @@ Di Firebase Authentication > Settings > Authorized domains, tambahkan \`localhos
 ### Batas status saat ini
 
 Paket cPanel hanya menyiapkan distribusi file frontend. Ini tidak berarti semua portal sudah berpindah ke Firebase. Jangan mengubah \`backend: "legacy"\` pada \`firebase/runtime-config.js\` dan jangan menganggap dashboard orang tua/guru siap untuk Firebase sampai integrasi portal, data import, role authorization, dan regression test dinyatakan lulus.
+
+
+## Konsekuensi lokasi Firestore \`nam5\`
+
+Pemilik telah mengonfirmasi bahwa Firestore \`(default)\` berada di \`nam5\`, yaitu multi-region Amerika Serikat bagian tengah. Lokasi multi-region ini mereplikasi data pada region baca/tulis \`us-central1\` (Iowa) dan \`us-central2\` (Oklahoma—region Google Cloud privat), dengan witness \`us-east1\` (South Carolina). Lokasi ini tidak dapat diubah setelah database diprovisikan.
+
+Firebase merekomendasikan Cloud Functions \`us-central1\` untuk Firestore \`nam5\`. Karena itu konfigurasi Functions, endpoint browser API, dan pemeriksaan preflight repositori menggunakan \`us-central1\`. Jangan deploy fungsi baru di \`asia-southeast2\` untuk database ini; lokasi berbeda dapat meningkatkan latensi dan biaya.
+
+Catatan arsitektur: pengguna utama berada di Indonesia, sehingga akses ke database multi-region AS berpotensi memiliki latensi lebih tinggi dibanding database regional Asia. Namun jangan mencoba mengubah database default atau membuat named database baru secara spontan. Dukungan akses database bernama pada sebagian API SDK masih diberi status preview; opsi tersebut perlu evaluasi terpisah sebelum digunakan untuk produksi.

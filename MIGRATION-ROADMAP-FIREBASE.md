@@ -4,7 +4,7 @@
 
 - Firebase Authentication untuk identitas siswa dan guru.
 - PIN undangan orang tua yang diverifikasi server, dengan pembatasan percobaan dan Firebase custom token.
-- Cloud Functions (Node.js 22, region Jakarta / asia-southeast2) untuk logika bisnis server-side.
+- Cloud Functions (Node.js 22, region `us-central1`, nearest recommended region for Firestore `nam5`) untuk logika bisnis server-side.
 - Cloud Firestore sebagai penyimpanan data utama.
 - Firebase Hosting atau hosting statis yang ada untuk frontend, setelah tiap portal menggunakan Firebase API.
 - Google Apps Script dihentikan setelah verifikasi data dan cutover selesai.
@@ -88,7 +88,7 @@ Perubahan repositori menyiapkan server, aturan, dan tooling; belum mengekspor da
 ## Checklist persiapan project
 
 1. Buka [Firestore Console](https://console.firebase.google.com/project/monitoring-ict-smpit/firestore) dan cek apakah database `(default)` sudah ada. Bila ada, catat lokasi dan jangan membuat database kedua.
-2. Bila belum ada, buat Cloud Firestore Standard Edition dengan ID `(default)`, Production mode, dan lokasi `asia-southeast2` (Jakarta) bila tersedia. Lokasi database tidak dapat diganti sesudah provisioning. Jika lokasi default Google Cloud sudah ditetapkan, console dapat membatasi pilihan lokasi.
+2. Pemilik mengonfirmasi Firestore `(default)` sudah ada di lokasi `nam5` (multi-region Amerika Serikat bagian tengah). Jangan membuat ulang/menghapus database. Firebase merekomendasikan Cloud Functions `us-central1` untuk `nam5`; database location tidak dapat diubah sesudah provisioning.
 3. Di [Authentication Console](https://console.firebase.google.com/project/monitoring-ict-smpit/authentication), aktifkan Email/Password untuk login siswa dan guru. Orang tua memakai custom token setelah validasi PIN.
 4. Pastikan Functions API, Cloud Build, Artifact Registry, dan layanan pendukung deployment dapat diaktifkan. Billing Blaze sudah dilaporkan aktif; buat budget alerts untuk memantau biaya.
 5. Deploy Functions dan Firestore Rules hanya setelah uji emulator/staging. Rules saat ini deny-by-default dan akan memutus akses dashboard guru lama yang membaca Firestore langsung.
@@ -116,3 +116,6 @@ Perubahan repositori menyiapkan server, aturan, dan tooling; belum mengekspor da
 - Script `scripts/build-cpanel.js` menghasilkan `dist-cpanel/` yang hanya berisi file frontend dan browser-side Firebase config. Jangan mengunggah root repository ke `public_html`.
 - Domain produksi belum ditetapkan; Authorized Domains dan CORS production origin baru diatur setelah domain final diketahui.
 - Development lokal disajikan melalui local HTTP server dan dapat memakai backend Firebase yang sama. Gunakan data/akun uji atau emulator/project development untuk menghindari perubahan data produksi.
+
+
+- Keputusan lokasi terkonfirmasi: Firestore `(default)` berada di `nam5`. Cloud Functions diarahkan ke `us-central1` sesuai pemetaan resmi Firebase. Lokasi database tidak diubah.
