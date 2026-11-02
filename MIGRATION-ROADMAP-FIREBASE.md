@@ -119,3 +119,14 @@ Perubahan repositori menyiapkan server, aturan, dan tooling; belum mengekspor da
 
 
 - Keputusan lokasi terkonfirmasi: Firestore `(default)` berada di `nam5`. Cloud Functions diarahkan ke `us-central1` sesuai pemetaan resmi Firebase. Lokasi database tidak diubah.
+
+
+## Batasan keselamatan database bersama — WAJIB
+
+- Firestore \`(default)\` di project \`monitoring-ict-smpit\` berada di \`nam5\` dan digunakan aplikasi lain. Database ini **tidak boleh dihapus, di-reset, dibuat ulang, atau diganti**.
+- Sebelum migrasi, identifikasi seluruh koleksi dan pemiliknya. Jangan berasumsi \`legacyData\` atau \`parentAccess\` adalah koleksi kosong/khusus Official ICT.
+- Importer menulis ke \`legacyData/{sheet}/rows/{docId}\` dengan \`batch.set()\` dan membuat \`parentAccess/{studentCode}\`; dokumen dengan ID sama dapat tertimpa. Tidak ada impor sampai kedua path ini diperiksa dan dipastikan tidak bentrok.
+- \`firestore.rules\` saat ini memiliki aturan deny-all untuk seluruh database. Jangan deploy rules ini ke project bersama tanpa menggabungkan dan menguji rules semua aplikasi.
+- Tidak boleh menjalankan reset, recursive delete, collection wipe, atau deployment Firebase menyeluruh. Perubahan harus terarah pada resource milik Official ICT dan sudah di-backup.
+- Bila perlu, pindahkan data Official ICT ke namespace yang terisolasi sebelum impor. Jangan menghapus atau memindahkan data aplikasi lain.
+- Lihat \`FIRESTORE-SHARED-DATABASE-POLICY.md\` sebelum tindakan tulis atau deploy.

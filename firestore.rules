@@ -1,3 +1,10 @@
+// IMPORTANT: SHARED DATABASE SAFETY WARNING
+// This Firestore database is shared with other applications.
+// These deny-all rules are NOT safe to deploy as-is to the shared project:
+// the catch-all rule below would block client access for every other app.
+// Do not deploy firestore.rules from this repository until all apps' rules
+// have been audited and safely merged. This file is a draft only.
+
 rules_version = '2';
 
 service cloud.firestore {

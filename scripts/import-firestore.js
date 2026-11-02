@@ -1,3 +1,12 @@
+/**
+ * SHARED DATABASE SAFETY:
+ * Firestore (default) is shared with other applications. Never delete or reset
+ * the database. This importer writes to legacyData/{sheet}/rows/{docId} using
+ * batch.set() (an existing matching document can be overwritten) and creates
+ * parentAccess/{studentCode} only when absent. Audit ownership and collisions
+ * in both paths and verify a backup BEFORE running this importer.
+ * Do not run while either path is used by another application.
+ */
 #!/usr/bin/env node
 "use strict";
 

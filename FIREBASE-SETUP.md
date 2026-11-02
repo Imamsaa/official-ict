@@ -229,3 +229,20 @@ Pemilik telah mengonfirmasi bahwa Firestore \`(default)\` berada di \`nam5\`, ya
 Firebase merekomendasikan Cloud Functions \`us-central1\` untuk Firestore \`nam5\`. Karena itu konfigurasi Functions, endpoint browser API, dan pemeriksaan preflight repositori menggunakan \`us-central1\`. Jangan deploy fungsi baru di \`asia-southeast2\` untuk database ini; lokasi berbeda dapat meningkatkan latensi dan biaya.
 
 Catatan arsitektur: pengguna utama berada di Indonesia, sehingga akses ke database multi-region AS berpotensi memiliki latensi lebih tinggi dibanding database regional Asia. Namun jangan mencoba mengubah database default atau membuat named database baru secara spontan. Dukungan akses database bernama pada sebagian API SDK masih diberi status preview; opsi tersebut perlu evaluasi terpisah sebelum digunakan untuk produksi.
+
+
+## ATURAN WAJIB — Firestore dipakai bersama aplikasi lain
+
+**JANGAN PERNAH menghapus, mengosongkan, membuat ulang, atau mengganti database Firestore \`(default)\`.** Database \`nam5\` milik project \`monitoring-ict-smpit\` juga digunakan oleh aplikasi lain dan harus diperlakukan sebagai database bersama yang kritis.
+
+Ketentuan:
+1. Tidak menjalankan \`firebase firestore:delete\`, penghapusan database, recursive delete, reset database, atau script pembersihan massal.
+2. Tidak membuat database pengganti dan tidak menghapus koleksi yang sudah ada.
+3. Tidak menjalankan \`firebase deploy --only firestore:rules\` atau deploy rules gabungan tanpa audit aturan seluruh aplikasi yang memakai project ini.
+4. File \`firestore.rules\` di repositori ini adalah rancangan awal yang memiliki aturan \`deny all\` menyeluruh. Deploy file itu apa adanya dapat memblokir aplikasi lain walaupun data mereka tidak dihapus.
+5. Sebelum impor, audit nama/path koleksi dan jumlah dokumen yang sudah ada. Importer menulis ke \`legacyData/{sheet}/rows/{docId}\` dan \`parentAccess/{studentCode}\`; operasi \`set()\` dapat mengganti dokumen dengan ID yang sama. Nama path ini harus dipastikan tidak dipakai aplikasi lain.
+6. Jika ada benturan atau kepemilikan koleksi tidak jelas, hentikan impor dan rancang namespace terisolasi untuk Official ICT terlebih dahulu.
+7. Buat dan verifikasi backup sebelum operasi tulis. Jangan pernah menghapus data aplikasi lain untuk menyelesaikan benturan.
+8. Bila hanya memperbarui Cloud Functions, gunakan target deploy fungsi secara spesifik setelah audit, bukan deploy seluruh Firebase project.
+
+Baca \`FIRESTORE-SHARED-DATABASE-POLICY.md\` sebelum migrasi, impor, atau deployment.

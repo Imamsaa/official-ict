@@ -67,6 +67,10 @@ function status(label, ok, detail) {
 
 console.log("Official ICT — Firebase project preflight");
 console.log("Read-only check. No Firebase or Google Cloud resources will be changed.");
+console.log("SHARED DATABASE SAFETY: do not delete/reset the existing (default) database.");
+console.log("Do not deploy this repository's firestore.rules until all apps' rules have been audited.");
+console.log("Audit collection ownership and backup before running any importer.");
+
 console.log("Expected project:", EXPECTED_PROJECT);
 console.log("");
 
