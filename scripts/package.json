@@ -6,7 +6,8 @@
     "preflight": "node firebase-project-preflight.js",
     "import": "node import-firestore.js",
     "verify": "node verify-firestore-import.js",
-    "build:cpanel": "node build-cpanel.js"
+    "build:cpanel": "node build-cpanel.js",
+    "audit": "node audit-shared-firestore.js"
   },
   "dependencies": {
     "firebase-admin": "^13.4.0"

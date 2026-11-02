@@ -130,3 +130,6 @@ Perubahan repositori menyiapkan server, aturan, dan tooling; belum mengekspor da
 - Tidak boleh menjalankan reset, recursive delete, collection wipe, atau deployment Firebase menyeluruh. Perubahan harus terarah pada resource milik Official ICT dan sudah di-backup.
 - Bila perlu, pindahkan data Official ICT ke namespace yang terisolasi sebelum impor. Jangan menghapus atau memindahkan data aplikasi lain.
 - Lihat \`FIRESTORE-SHARED-DATABASE-POLICY.md\` sebelum tindakan tulis atau deploy.
+
+
+- Data migrasi Official ICT disimpan dalam namespace `officialIct_v1` di database `(default)`; path root generik milik aplikasi lain tidak disentuh. Audit read-only, backup, dan marker kepemilikan menjadi prasyarat impor.

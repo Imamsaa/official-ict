@@ -10,7 +10,7 @@ Functions runtime: Node.js 22
 
 - Billing Blaze aktif.
 - Akun memiliki hak Owner.
-- Pemilik telah mengonfirmasi database Cloud Firestore `(default)` sudah ada. Jangan membuat database baru; lokasi database masih perlu dilihat pada daftar database.
+- Pemilik telah mengonfirmasi database Cloud Firestore `(default)` sudah ada di lokasi `nam5`. Database itu digunakan aplikasi lain dan tidak boleh dihapus, di-reset, atau dibuat ulang.
 - Firebase Web API Key dan konfigurasi Web App telah tersedia pada `firebase/client.js`.
 - Status Email/Password Authentication belum diverifikasi.
 

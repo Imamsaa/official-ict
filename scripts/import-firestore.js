@@ -2,9 +2,9 @@
 /**
  * SHARED DATABASE SAFETY:
  * Firestore (default) is shared with other applications. Never delete or reset
- * the database. This importer writes to legacyData/{sheet}/rows/{docId} using
+ * the database. This importer writes to officialIct_v1/data/{sheet}/{docId} using
  * batch.set() (an existing matching document can be overwritten) and creates
- * parentAccess/{studentCode} only when absent. Audit ownership and collisions
+ * officialIct_v1/access/parentAccess/{studentCode} only when absent. Audit ownership and collisions
  * in both paths and verify a backup BEFORE running this importer.
  * Do not run while either path is used by another application.
  */
@@ -31,6 +31,7 @@ const { getAuth } = require("firebase-admin/auth");
 const { getFirestore, FieldValue } = require("firebase-admin/firestore");
 
 const PROJECT_ID = process.env.GOOGLE_CLOUD_PROJECT || process.env.GCLOUD_PROJECT || "monitoring-ict-smpit";
+const DATA_NAMESPACE = "officialIct_v1";
 const SHEETS = [
   "siswa", "guru", "bab", "materi", "progres_materi", "tugas_mingguan",
   "progres_tugas_mingguan", "karya", "link_karya", "skl", "skl_sub",
@@ -82,21 +83,86 @@ function pinHash(pin, salt) {
   return crypto.scryptSync(pin, salt, 64).toString("hex");
 }
 
+function dataRowsRef(db, sheet) {
+  return db.collection(DATA_NAMESPACE).doc("data").collection(sheet);
+}
+function parentAccessRef(db, code) {
+  return db.collection(DATA_NAMESPACE).doc("access").collection("parentAccess").doc(code);
+}
+async function getUserByEmailOrNull(auth, email) {
+  try { return await auth.getUserByEmail(email); }
+  catch (error) {
+    if (error.code === "auth/user-not-found") return null;
+    throw error;
+  }
+}
+function assertExistingAccountMatches(user, role, normalizedId, claimField) {
+  const claims = user.customClaims || {};
+  if (claims.role !== role || claims[claimField] !== normalizedId) {
+    throw new Error("Akun Authentication dengan alias yang sama sudah ada tetapi identitas/role tidak cocok. Tidak ada akun yang diubah. Periksa benturan akun secara manual.");
+  }
+}
+async function preflightAuthAccounts(auth, payload) {
+  const students = Array.isArray(payload.sheets.siswa) ? payload.sheets.siswa : [];
+  const teachers = Array.isArray(payload.sheets.guru) ? payload.sheets.guru : [];
+  const checked = new Set();
+  for (const row of students) {
+    const code = normCode(row.kode_siswa);
+    if (!code || checked.has("student:" + code)) continue;
+    checked.add("student:" + code);
+    const user = await getUserByEmailOrNull(auth, alias("student", code));
+    if (user) assertExistingAccountMatches(user, "student", code, "studentCode");
+    try {
+      const parent = await auth.getUser("parent-" + code);
+      assertExistingAccountMatches(parent, "parent", code, "studentCode");
+    } catch (error) {
+      if (error.code !== "auth/user-not-found") throw error;
+    }
+  }
+  for (const row of teachers) {
+    const id = normCode(row.id_guru);
+    if (!id || checked.has("teacher:" + id)) continue;
+    checked.add("teacher:" + id);
+    const user = await getUserByEmailOrNull(auth, alias("teacher", id));
+    if (user) assertExistingAccountMatches(user, "teacher", id, "teacherId");
+  }
+}
+async function claimNamespaceOwnership(db, confirmation) {
+  if (confirmation !== DATA_NAMESPACE) {
+    throw new Error("Impor dibatalkan. Ulangi hanya setelah audit dan backup dengan flag --confirm-namespace=" + DATA_NAMESPACE);
+  }
+  const root = db.collection(DATA_NAMESPACE);
+  const metaRef = root.doc("_meta");
+  const meta = await metaRef.get();
+  if (meta.exists) {
+    const data = meta.data() || {};
+    if (data.owner !== "official-ict" || data.namespace !== DATA_NAMESPACE || data.schemaVersion !== 1) {
+      throw new Error("Namespace tujuan sudah memiliki metadata yang bukan milik Official ICT. Tidak ada data yang ditulis.");
+    }
+    return;
+  }
+  const existingDocs = await root.listDocuments();
+  if (existingDocs.some((ref) => ref.id !== "_meta")) {
+    throw new Error("Namespace " + DATA_NAMESPACE + " sudah berisi dokumen tanpa marker kepemilikan Official ICT. Hentikan impor dan audit manual.");
+  }
+  await metaRef.create({
+    owner: "official-ict",
+    namespace: DATA_NAMESPACE,
+    schemaVersion: 1,
+    createdAt: FieldValue.serverTimestamp()
+  });
+}
+
 async function ensureAccount(auth, role, id, displayName, oldPassword, report) {
   const normalized = normCode(id);
   if (!normalized) return;
   const email = alias(role, normalized);
-  try {
-    const existing = await auth.getUserByEmail(email);
-    const previous = existing.customClaims || {};
-    await auth.setCustomUserClaims(existing.uid, {
-      ...previous,
-      role: role,
-      ...(role === "student" ? { studentCode: normalized } : { teacherId: normalized })
-    });
+  const existing = await getUserByEmailOrNull(auth, email);
+  if (existing) {
+    assertExistingAccountMatches(
+      existing, role, normalized, role === "student" ? "studentCode" : "teacherId"
+    );
     return;
-  } catch (error) {
-    if (error.code !== "auth/user-not-found") throw error;
   }
 
   const sourcePassword = norm(oldPassword);
@@ -117,11 +183,16 @@ async function ensureAccount(auth, role, id, displayName, oldPassword, report) {
 }
 
 async function main() {
-  const inputPath = process.argv[2];
+  const args = process.argv.slice(2);
+  const confirmation = args.find((arg) => arg.startsWith("--confirm-namespace=")) || "";
+  const inputPath = args.find((arg) => !arg.startsWith("--"));
   if (!inputPath || !fs.existsSync(inputPath)) {
-    console.error("Pemakaian: node scripts/import-firestore.js <path-export-json>");
+    console.error("Pemakaian: node scripts/import-firestore.js --confirm-namespace=officialIct_v1 <path-export-json>");
     process.exitCode = 2;
     return;
+  }
+  if (confirmation !== "--confirm-namespace=" + DATA_NAMESPACE) {
+    throw new Error("Impor dibatalkan. Flag konfirmasi namespace wajib setelah audit koleksi dan backup.");
   }
   const payload = JSON.parse(fs.readFileSync(path.resolve(inputPath), "utf8"));
   if (payload.format !== "official-ict-appscript-export-v1" || !payload.sheets) {
@@ -130,6 +201,10 @@ async function main() {
   if (!getApps().length) initializeApp({ credential: applicationDefault(), projectId: PROJECT_ID });
   const db = getFirestore();
   const auth = getAuth();
+  const unknownSheets = Object.keys(payload.sheets).filter((name) => !SHEETS.includes(name));
+  if (unknownSheets.length) throw new Error("Export memuat sheet yang tidak dikenal: " + unknownSheets.join(", "));
+  await preflightAuthAccounts(auth, payload);
+  await claimNamespaceOwnership(db, confirmation.split("=")[1]);
   const accountResetReport = [];
   const parentInviteReport = [];
   const counts = {};
@@ -141,7 +216,7 @@ async function main() {
       const batch = db.batch();
       rows.slice(offset, offset + 400).forEach((row, i) => {
         const docId = safeDocId(sheet, row, offset + i);
-        batch.set(db.collection("legacyData").doc(sheet).collection("rows").doc(docId), {
+        batch.set(dataRowsRef(db, sheet).doc(docId), {
           record: cleanRecord(row),
           migratedAt: FieldValue.serverTimestamp(),
           source: "appscript"
@@ -157,7 +232,7 @@ async function main() {
     const code = normCode(student.kode_siswa);
     if (!code) continue;
     await ensureAccount(auth, "student", code, student.nama_siswa, student.password, accountResetReport);
-    const accessRef = db.collection("parentAccess").doc(code);
+    const accessRef = parentAccessRef(db, code);
     const accessSnap = await accessRef.get();
     if (!accessSnap.exists) {
       const pin = String(crypto.randomInt(100000, 1000000));

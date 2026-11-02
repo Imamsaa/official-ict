@@ -33,3 +33,8 @@ Sebelum deployment:
 ## Keterbatasan saat ini
 
 Endpoint backend dan alat impor disiapkan, tetapi frontend yang ada masih memanggil Google Apps Script atau prototype Firestore. Semua portal harus diubah ke Firebase Authentication dan API baru sebelum Apps Script dapat dihentikan. Data produksi juga belum dipindahkan oleh commit ini.
+
+
+## Firestore data namespace
+
+The API reads and writes Official ICT records only under `officialIct_v1/data/{sheet}/{docId}` and parent PIN records under `officialIct_v1/access/parentAccess/{studentCode}`. The ownership marker is `officialIct_v1/_meta`. Do not use root-level generic collections `legacyData` or `parentAccess`. The project Firestore rules file is not safe to deploy to the shared database until all apps' rules are merged and reviewed.

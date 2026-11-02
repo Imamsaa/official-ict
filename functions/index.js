@@ -11,6 +11,7 @@ if (!getApps().length) initializeApp();
 const db = getFirestore();
 const auth = getAuth();
 const REGION = "us-central1";
+const DATA_NAMESPACE = "officialIct_v1";
 const SHEETS = [
   "siswa", "guru", "bab", "materi", "progres_materi",
   "tugas_mingguan", "progres_tugas_mingguan", "karya", "link_karya",
@@ -86,7 +87,7 @@ function safeDocId(sheet, row, index) {
 }
 function sheetRowsRef(sheet) {
   if (!SHEETS.includes(sheet)) throw new Error("Sheet tidak dikenal: " + sheet);
-  return db.collection("legacyData").doc(sheet).collection("rows");
+  return db.collection(DATA_NAMESPACE).doc("data").collection(sheet);
 }
 async function readSheet(sheet) {
   if (!SHEETS.includes(sheet)) return [];
@@ -415,7 +416,7 @@ async function parentLogin(body) {
     err.status = 400;
     throw err;
   }
-  const ref = db.collection("parentAccess").doc(code);
+  const ref = db.collection(DATA_NAMESPACE).doc("access").collection("parentAccess").doc(code);
   const snap = await ref.get();
   if (!snap.exists) {
     const err = new Error("Kode siswa atau PIN orang tua tidak valid.");

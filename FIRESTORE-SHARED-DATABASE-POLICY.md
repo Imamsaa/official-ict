@@ -30,26 +30,26 @@ Firestore Security Rules apply at the database level, not independently per appl
 
 ## Current importer write scope
 
-The migration importer does not contain a database deletion command, but it does write to these top-level paths:
+The current importer writes only inside one Official ICT namespace:
 
-- \`legacyData/{sheet}/rows/{docId}\`: uses deterministic document IDs and \`batch.set()\`. Re-running it can overwrite a document at the same ID.
-- \`parentAccess/{studentCode}\`: creates a PIN record only when the target document does not exist.
+- \`officialIct_v1/data/{sheet}/{docId}\`
+- \`officialIct_v1/access/parentAccess/{studentCode}\`
+- Ownership marker: \`officialIct_v1/_meta\`
 
-Those path names must be inspected before any import. Do not assume they are unused just because the collection names look specific. If either path belongs to another application, stop and design an Official ICT-only namespace, then update the importer, API, and verifier consistently.
+The generic root-level paths \`legacyData\` and \`parentAccess\` are explicitly left untouched. The importer requires an explicit namespace confirmation, refuses an unknown namespace, and checks Firebase Authentication alias/UID conflicts before writing. The read-only audit script counts generic paths only; it never changes their records.
 
-Cloud Functions also exposes delete operations for selected Official ICT records. Those operations must remain restricted to verified Official ICT paths and must never target unrelated collections.
+Cloud Functions CRUD/delete operations are scoped through the Official ICT namespace helper. Do not broaden those paths to any top-level collection.
 
 ## Mandatory preflight before any write
 
-1. List all existing top-level collections and subcollections; record which application owns each one.
-2. Inspect the existing document counts and path structure for \`legacyData\` and \`parentAccess\`.
-3. Confirm whether any other application uses those paths or relies on direct Firestore client access.
-4. Create a verified backup/export of all existing application data using the owners' approved method.
-5. Confirm that the import destination is isolated from every other application's paths.
-6. Run import only after the above checks are documented and approved.
-7. Verify both Official ICT and the other application after every change.
+1. Run \`node scripts/audit-shared-firestore.js\` to list top-level collection names and document counts without exposing document values.
+2. Confirm \`officialIct_v1\` is empty or has the expected Official ICT ownership marker.
+3. Confirm the namespace is not used by another application.
+4. Create and verify a backup/export of the shared database before the first import.
+5. Run the importer only with \`--confirm-namespace=officialIct_v1\`.
+6. Verify imported data and test the other application after the change.
 
-If the destination paths cannot be proven safe, **do not import yet**. Build an isolated Official ICT namespace first. Never solve a collision by deleting or overwriting another application's data.
+If the namespace has unknown documents or its ownership cannot be proven, **do not import yet**. Never solve a collision by deleting or overwriting another application's data.
 
 ## Safe deployment scope
 

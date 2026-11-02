@@ -18,6 +18,7 @@ const { getAuth } = require("firebase-admin/auth");
 const { getFirestore } = require("firebase-admin/firestore");
 
 const PROJECT_ID = process.env.GOOGLE_CLOUD_PROJECT || process.env.GCLOUD_PROJECT || "monitoring-ict-smpit";
+const DATA_NAMESPACE = "officialIct_v1";
 
 function norm(value) {
   return String(value == null ? "" : value).trim();
@@ -103,7 +104,7 @@ async function main() {
 
   for (const sheet of Object.keys(payload.sheets).sort()) {
     const rows = Array.isArray(payload.sheets[sheet]) ? payload.sheets[sheet] : [];
-    const snapshot = await db.collection("legacyData").doc(sheet).collection("rows").get();
+    const snapshot = await db.collection(DATA_NAMESPACE).doc("data").collection(sheet).get();
     const expectedIds = new Set(rows.map((row, index) => expectedDocId(sheet, row, index, keyFields)));
     const actualIds = new Set(snapshot.docs.map((doc) => doc.id));
     const secrets = snapshot.docs.filter((doc) => hasSensitiveField(doc.data().record)).length;
@@ -122,7 +123,11 @@ async function main() {
   const teachers = Array.isArray(payload.sheets.guru) ? payload.sheets.guru : [];
   const uniqueStudents = new Map(students.map((row) => [normCode(row.kode_siswa), row]));
   uniqueStudents.delete("");
-  const parentAccessCount = await countDocs(db.collection("parentAccess"));
+  const namespaceMeta = await db.collection(DATA_NAMESPACE).doc("_meta").get();
+  if (!namespaceMeta.exists || namespaceMeta.get("owner") !== "official-ict" || namespaceMeta.get("schemaVersion") !== 1) {
+    throw new Error("Namespace Official ICT belum terinisialisasi atau marker kepemilikannya tidak cocok.");
+  }
+  const parentAccessCount = await countDocs(db.collection(DATA_NAMESPACE).doc("access").collection("parentAccess"));
   const studentAccounts = await checkAccounts(auth, [...uniqueStudents.values()], "student", "kode_siswa", "studentCode");
   const teacherAccounts = await checkAccounts(auth, teachers, "teacher", "id_guru", "teacherId");
 
