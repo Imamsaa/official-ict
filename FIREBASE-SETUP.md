@@ -142,3 +142,80 @@ Setelah hosting dipilih, masukkan origin tepatnya (misalnya \`https://ict.exampl
 ### Pilihan aman untuk development
 
 Jangan menguji fitur tulis/hapus dengan data asli siswa. Pilihan yang disarankan adalah Firebase Emulator Suite atau Firebase project development terpisah. Bila sementara memakai project produksi, batasi uji coba ke akun dan data uji yang memang disiapkan khusus. Jangan menaruh Service Account key di frontend atau repositori.
+
+
+## Deployment frontend ke Shared Hosting / cPanel
+
+Official ICT memakai arsitektur **static frontend + Firebase backend**. cPanel hanya menyajikan HTML, CSS, JavaScript, dan aset. Firebase Authentication, Cloud Firestore, dan Cloud Functions tetap berjalan di project Firebase \`monitoring-ict-smpit\`. Tidak dibutuhkan Node.js, PHP, database MySQL, atau Firebase Hosting di cPanel untuk frontend ini.
+
+### Struktur URL
+
+- \`https://DOMAIN/\` — website publik (isi \`web_public/\` dipasang pada document root).
+- \`https://DOMAIN/siswa/\` — portal siswa.
+- \`https://DOMAIN/ortu/\` — portal orang tua.
+- \`https://DOMAIN/guru/\` — dashboard guru.
+- \`https://DOMAIN/firebase/\` — hanya file browser-side Firebase yang dibutuhkan frontend.
+
+### Buat paket frontend yang aman
+
+Dari root repository, jalankan:
+
+\`\`\`bash
+node scripts/build-cpanel.js
+\`\`\`
+
+Paket dibuat di \`dist-cpanel/\`. Script menyalin situs publik ke root, mempertahankan folder portal, menyalin aset bersama yang digunakan portal orang tua, dan menyesuaikan path konfigurasi Firebase pada homepage. Script **tidak** memasukkan \`functions/\`, \`scripts/\`, \`code.gs\`, file spreadsheet, atau kredensial Admin.
+
+### Upload ke cPanel
+
+1. Pastikan domain/subdomain sudah diarahkan ke akun hosting dan document root-nya benar.
+2. Buka cPanel > File Manager > document root domain (umumnya \`public_html/\` untuk domain utama).
+3. Upload isi folder \`dist-cpanel/\` ke document root; jangan upload folder \`dist-cpanel\` sebagai subfolder.
+4. Pastikan \`index.html\` berada langsung di document root dan folder \`siswa\`, \`ortu\`, \`guru\`, serta \`firebase\` berada di sampingnya.
+5. Aktifkan SSL/HTTPS pada domain hosting melalui AutoSSL/fitur SSL penyedia hosting, lalu uji semua URL di atas.
+
+Jangan upload seluruh root repository ke \`public_html\`. Folder Functions, file migrasi, source Apps Script, dan konfigurasi pengembangan tidak diperlukan atau tidak boleh dipublikasikan.
+
+### Sambungkan domain cPanel ke Firebase
+
+Setelah domain final diketahui:
+
+1. Firebase Console > Authentication > Settings > Authorized domains: tambahkan hostname yang digunakan, misalnya \`ict.contoh.sch.id\`. Masukkan hostname saja, tanpa \`https://\` atau path. Tambahkan \`www\` secara terpisah apabila memang dipakai.
+2. Atur daftar CORS Cloud Functions melalui file lokal yang tidak di-commit, yaitu \`functions/.env.monitoring-ict-smpit\`:
+
+\`\`\`dotenv
+ALLOWED_ORIGINS=https://ict.contoh.sch.id
+\`\`\`
+
+Untuk dua hostname:
+\`\`\`dotenv
+ALLOWED_ORIGINS=https://ict.contoh.sch.id,https://www.ict.contoh.sch.id
+\`\`\`
+
+3. Setelah region Firestore diperiksa, API dan aturan keamanan selesai diuji, deploy Cloud Functions dari komputer developer dengan Firebase CLI. CORS hanya mengatur browser origin; autentikasi dan pemeriksaan role di backend tetap wajib untuk setiap operasi privat.
+
+Domain produksi belum diketahui, jadi jangan mengisi contoh domain di atas sebagai konfigurasi sungguhan.
+
+### Development lokal
+
+Frontend dapat dijalankan pada \`localhost\` dan menggunakan project Firebase yang sama melalui browser-side config serta Cloud Functions API. Jalankan server lokal dari paket hasil build agar struktur path sama dengan production:
+
+\`\`\`bash
+node scripts/build-cpanel.js
+cd dist-cpanel
+python -m http.server 5500
+\`\`\`
+
+Buka:
+- \`http://localhost:5500/\`
+- \`http://localhost:5500/siswa/\`
+- \`http://localhost:5500/ortu/\`
+- \`http://localhost:5500/guru/\`
+
+Di Firebase Authentication > Settings > Authorized domains, tambahkan \`localhost\` untuk pengujian lokal apabila belum tercantum. CORS backend sudah mengizinkan origin \`localhost\` dan \`127.0.0.1\` pada port development apa pun. Jangan menggunakan \`file://\` untuk membuka HTML secara langsung.
+
+**Penting:** konfigurasi default tetap menggunakan endpoint Cloud Functions project yang sama. Pengujian tulis/hapus dari localhost karenanya dapat mengubah data cloud yang sama. Gunakan akun serta data uji, atau siapkan Firebase Emulator / project development terpisah sebelum pengujian yang mengubah data.
+
+### Batas status saat ini
+
+Paket cPanel hanya menyiapkan distribusi file frontend. Ini tidak berarti semua portal sudah berpindah ke Firebase. Jangan mengubah \`backend: "legacy"\` pada \`firebase/runtime-config.js\` dan jangan menganggap dashboard orang tua/guru siap untuk Firebase sampai integrasi portal, data import, role authorization, dan regression test dinyatakan lulus.

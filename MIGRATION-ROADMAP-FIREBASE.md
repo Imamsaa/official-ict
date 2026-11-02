@@ -108,3 +108,11 @@ Perubahan repositori menyiapkan server, aturan, dan tooling; belum mengekspor da
 
 
 - Frontend tidak bergantung pada Firebase Hosting. Development lokal dan hosting eksternal didukung melalui konfigurasi API URL, CORS localhost, dan Authorized Domains Firebase Authentication. Domain produksi akan ditambahkan setelah platform/domain hosting ditentukan.
+
+
+## Hosting frontend
+
+- Target hosting frontend: Shared Hosting / cPanel. Frontend disajikan sebagai file statis pada document root; Firebase Authentication, Firestore, dan Cloud Functions tetap menjadi backend terpisah.
+- Script `scripts/build-cpanel.js` menghasilkan `dist-cpanel/` yang hanya berisi file frontend dan browser-side Firebase config. Jangan mengunggah root repository ke `public_html`.
+- Domain produksi belum ditetapkan; Authorized Domains dan CORS production origin baru diatur setelah domain final diketahui.
+- Development lokal disajikan melalui local HTTP server dan dapat memakai backend Firebase yang sama. Gunakan data/akun uji atau emulator/project development untuk menghindari perubahan data produksi.

@@ -26,3 +26,6 @@ migration-report*.json
 # Local migration tool dependencies
 scripts/node_modules/
 scripts/package-lock.json
+
+# Local cPanel deployment bundle
+/dist-cpanel/
